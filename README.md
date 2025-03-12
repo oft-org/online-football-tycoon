@@ -1,4 +1,4 @@
-# online-football-tycoo
+# online-football-tycoon
 Online Football Tycoon - An online football management simulator. Inspired by Easy Football Tycoon
 
 
