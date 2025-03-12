@@ -1,6 +1,8 @@
 package match
 
-import "github.com/robertobouses/online-football-tycoon/team"
+import (
+	"github.com/robertobouses/online-football-tycoon/team"
+)
 
 type Match struct {
 	HomeMatchStrategy Strategy
@@ -32,9 +34,30 @@ type TeamStats struct {
 
 func (m Match) Play() (Result, error) {
 	var result Result
-	if m.HomeMatchStrategy.GameTempo == "fast" {
-		result.HomeStats.Goals = 2
-		result.AwayStats.Goals = 0
+	var totalHomeGoals, totalAwayGoals int
+
+	homeTotalTechnique, _, _, err := m.HomeMatchStrategy.StrategyTeam.CalculateTotalSkillsByTeam()
+	if err != nil {
+		return Result{}, err
 	}
+
+	awayTotalTechnique, _, _, err := m.AwayMatchStrategy.StrategyTeam.CalculateTotalSkillsByTeam()
+	if err != nil {
+		return Result{}, err
+	}
+
+	if homeTotalTechnique > awayTotalTechnique {
+		totalHomeGoals += 1
+	}
+	if homeTotalTechnique < awayTotalTechnique {
+		totalAwayGoals += 1
+	} else {
+		totalHomeGoals += 1
+		totalAwayGoals += 1
+	}
+
+	result.HomeStats.Goals = totalHomeGoals
+	result.AwayStats.Goals = totalAwayGoals
+
 	return result, nil
 }
