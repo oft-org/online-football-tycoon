@@ -2,13 +2,35 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
+	"github.com/robertobouses/online-football-tycoon/internal"
 	"github.com/robertobouses/online-football-tycoon/match"
+	"github.com/robertobouses/online-football-tycoon/repository"
 	"github.com/robertobouses/online-football-tycoon/team"
 )
 
 func main() {
+
+	db, err := internal.NewPostgres(internal.DBConfig{
+		User:     "postgres",
+		Pass:     "mysecretpassword",
+		Host:     "localhost",
+		Port:     "5432",
+		Database: "online_football_tycoon",
+	})
+
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	_, err = repository.NewRepository(db)
+	if err != nil {
+		panic(err)
+	}
+
 	homePlayers := []team.Player{
 		{PlayerId: uuid.New(), FirstName: "Marc-André", LastName: "ter Stegen", Nationality: "Germany", Position: "goalkeeper", Age: 31, Fee: 50000000, Salary: 10000000, Technique: 85, Mental: 88, Physique: 80, InjuryDays: 0, Lined: true, Familiarity: 90, Fitness: 95, Happiness: 90},
 		{PlayerId: uuid.New(), FirstName: "Jules", LastName: "Koundé", Nationality: "France", Position: "defender", Age: 25, Fee: 60000000, Salary: 9000000, Technique: 78, Mental: 85, Physique: 88, InjuryDays: 0, Lined: true, Familiarity: 85, Fitness: 92, Happiness: 87},
