@@ -44,23 +44,26 @@ func (m Match) Play() (Result, error) {
 	homeTeam := m.HomeMatchStrategy.StrategyTeam
 	awayTeam := m.AwayMatchStrategy.StrategyTeam
 
-	log.Println("rivalLineup, tras simular", rivalLineup)
+	log.Println("rivalLineup", rivalLineup)
+
 	numberOfMatchEvents, err := CalculateNumberOfMatchEvents(m.HomeMatchStrategy.GameTempo, m.AwayMatchStrategy.GameTempo)
 	if err != nil {
 		log.Println("error al obtener numberOfMatchEvents", err)
 		return Result{}, err
 	}
+	log.Println("numberOfMatchEvents", numberOfMatchEvents)
 
 	numberOfLineupEvents, numberOfRivalEvents, err := DistributeMatchEvents(m.HomeMatchStrategy.StrategyTeam, m.AwayMatchStrategy.StrategyTeam, numberOfMatchEvents)
 	if err != nil {
 		log.Println("error al distribuir numberOfMatchEvents", err)
 		return Result{}, err
 	}
+	log.Println("numberOfLineupEvents, numberOfRivalEvents", numberOfLineupEvents, numberOfRivalEvents)
 
-	lineupResults, rivalResults, lineupScoreChances, rivalScoreChances, lineupGoals, rivalGoals := GenerateEvents(homeTeam, awayTeam, numberOfLineupEvents, numberOfRivalEvents)
+	homeEvents, awayEvents, homeScoreChances, awayScoreChances, homeGoals, awayGoals := GenerateEvents(homeTeam, awayTeam, numberOfLineupEvents, numberOfRivalEvents)
 	breakMatch := EventResult{Minute: 45, Event: "Descanso"}
 	endMatch := EventResult{Minute: 90, Event: "Final del Partido"}
-	allEvents := append(lineupResults, rivalResults...)
+	allEvents := append(homeEvents, awayEvents...)
 	allEvents = append(allEvents, breakMatch, endMatch)
 	sort.Slice(allEvents, func(i, j int) bool {
 		return allEvents[i].Minute < allEvents[j].Minute
@@ -105,13 +108,13 @@ func (m Match) Play() (Result, error) {
 	result := Result{
 		HomeStats: TeamStats{
 			BallPossession: lineupPercentagePossession,
-			ScoringChances: lineupScoreChances,
-			Goals:          lineupGoals,
+			ScoringChances: homeScoreChances,
+			Goals:          homeGoals,
 		},
 		AwayStats: TeamStats{
 			BallPossession: rivalPercentagePossession,
-			ScoringChances: rivalScoreChances,
-			Goals:          rivalGoals,
+			ScoringChances: awayScoreChances,
+			Goals:          awayGoals,
 		},
 	}
 	return result, nil

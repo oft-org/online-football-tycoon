@@ -347,9 +347,9 @@ func GenerateEvents(lineup, rivalLineup team.Team, numberOfLineupEvents, numberO
 
 		minute := rand.Intn(90)
 		lineupResults = append(lineupResults, EventResult{
-			Event:  result + " para tu equipo",
+			Event:  result + fmt.Sprintf(" para el equipo %s", lineup.Name),
 			Minute: minute,
-			Team:   " tu equipo",
+			Team:   fmt.Sprintf(" %s", lineup.Name),
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
