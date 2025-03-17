@@ -1,10 +1,5 @@
 SELECT 
-    m.id AS match_id,
-    m.home_team,
-    m.away_team,
-    m.date,
-    m.home_result,
-    m.away_result,
+
     ht.name AS home_team_name,
     at.name AS away_team_name,
     hs.formation AS home_formation,

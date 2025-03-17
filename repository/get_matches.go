@@ -19,24 +19,25 @@ func (r *repository) GetMatches() ([]match.Match, error) {
 		var homeStrategy, awayStrategy match.Strategy
 
 		err := rows.Scan(
-			&homeTeam.Name,
-			&awayTeam.Name,
-			&homeStrategy.Formation,
-			&homeStrategy.PlayingStyle,
-			&homeStrategy.GameTempo,
-			&homeStrategy.PassingStyle,
-			&homeStrategy.DefensivePositioning,
-			&homeStrategy.BuildUpPlay,
-			&homeStrategy.AttackFocus,
-			&homeStrategy.KeyPlayerUsage,
-			&awayStrategy.Formation,
-			&awayStrategy.PlayingStyle,
-			&awayStrategy.GameTempo,
-			&awayStrategy.PassingStyle,
-			&awayStrategy.DefensivePositioning,
-			&awayStrategy.BuildUpPlay,
-			&awayStrategy.AttackFocus,
-			&awayStrategy.KeyPlayerUsage,
+			&homeTeam.Name,                     // home_team_name
+			&awayTeam.Name,                     // away_team_name
+			&homeStrategy.Formation,            // home_formation
+			&homeStrategy.PlayingStyle,         // home_playing_style
+			&homeStrategy.GameTempo,            // home_game_tempo
+			&homeStrategy.PassingStyle,         // home_passing_style
+			&homeStrategy.DefensivePositioning, // home_defensive_positioning
+			&homeStrategy.BuildUpPlay,          // home_build_up_play
+			&homeStrategy.AttackFocus,          // home_attack_focus
+			&homeStrategy.KeyPlayerUsage,       // home_key_player_usage
+			&awayStrategy.Formation,            // away_formation
+			&awayStrategy.PlayingStyle,         // away_playing_style
+			&awayStrategy.GameTempo,            // away_game_tempo
+			&awayStrategy.PassingStyle,         // away_passing_style
+			&awayStrategy.DefensivePositioning, // away_defensive_positioning
+			&awayStrategy.BuildUpPlay,          // away_build_up_play
+			&awayStrategy.AttackFocus,          // away_attack_focus
+			&awayStrategy.KeyPlayerUsage,       // away_key_player_usage
+
 		)
 		if err != nil {
 			return nil, err

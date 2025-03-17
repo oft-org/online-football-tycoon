@@ -16,6 +16,7 @@ import (
 
 func main() {
 
+<<<<<<< HEAD
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
@@ -100,6 +101,20 @@ func main() {
 
 	if port == "" {
 		port = "8080"
+=======
+	homePlayers := []team.Player{
+		{PlayerId: uuid.New(), FirstName: "Marc-André", LastName: "ter Stegen", Nationality: "Germany", Position: "goalkeeper", Age: 31, Fee: 50000000, Salary: 10000000, Technique: 85, Mental: 88, Physique: 80, InjuryDays: 0, Lined: true, Familiarity: 90, Fitness: 95, Happiness: 90},
+		{PlayerId: uuid.New(), FirstName: "Jules", LastName: "Koundé", Nationality: "France", Position: "defender", Age: 25, Fee: 60000000, Salary: 9000000, Technique: 78, Mental: 85, Physique: 88, InjuryDays: 0, Lined: true, Familiarity: 85, Fitness: 92, Happiness: 87},
+		{PlayerId: uuid.New(), FirstName: "Ronald", LastName: "Araújo", Nationality: "Uruguay", Position: "defender", Age: 24, Fee: 70000000, Salary: 9500000, Technique: 80, Mental: 87, Physique: 90, InjuryDays: 0, Lined: true, Familiarity: 88, Fitness: 94, Happiness: 88},
+		{PlayerId: uuid.New(), FirstName: "Andreas", LastName: "Christensen", Nationality: "Denmark", Position: "defender", Age: 27, Fee: 40000000, Salary: 8000000, Technique: 76, Mental: 85, Physique: 85, InjuryDays: 0, Lined: true, Familiarity: 86, Fitness: 91, Happiness: 85},
+		{PlayerId: uuid.New(), FirstName: "Alejandro", LastName: "Balde", Nationality: "Spain", Position: "defender", Age: 20, Fee: 50000000, Salary: 7000000, Technique: 78, Mental: 80, Physique: 89, InjuryDays: 0, Lined: true, Familiarity: 83, Fitness: 95, Happiness: 89},
+		{PlayerId: uuid.New(), FirstName: "Pedri", LastName: "González", Nationality: "Spain", Position: "midfielder", Age: 21, Fee: 100000000, Salary: 12000000, Technique: 92, Mental: 88, Physique: 78, InjuryDays: 0, Lined: true, Familiarity: 90, Fitness: 92, Happiness: 91},
+		{PlayerId: uuid.New(), FirstName: "Frenkie", LastName: "de Jong", Nationality: "Netherlands", Position: "midfielder", Age: 26, Fee: 90000000, Salary: 11000000, Technique: 90, Mental: 87, Physique: 85, InjuryDays: 0, Lined: true, Familiarity: 89, Fitness: 91, Happiness: 90},
+		{PlayerId: uuid.New(), FirstName: "Gavi", LastName: "Paez", Nationality: "Spain", Position: "midfielder", Age: 19, Fee: 80000000, Salary: 9000000, Technique: 88, Mental: 85, Physique: 80, InjuryDays: 0, Lined: true, Familiarity: 87, Fitness: 93, Happiness: 90},
+		{PlayerId: uuid.New(), FirstName: "Raphinha", LastName: "Dias", Nationality: "Brazil", Position: "forward", Age: 27, Fee: 60000000, Salary: 10000000, Technique: 85, Mental: 82, Physique: 86, InjuryDays: 0, Lined: true, Familiarity: 85, Fitness: 92, Happiness: 88},
+		{PlayerId: uuid.New(), FirstName: "Robert", LastName: "Lewandowski", Nationality: "Poland", Position: "forward", Age: 35, Fee: 50000000, Salary: 12000000, Technique: 92, Mental: 90, Physique: 88, InjuryDays: 0, Lined: true, Familiarity: 90, Fitness: 90, Happiness: 85},
+		{PlayerId: uuid.New(), FirstName: "João", LastName: "Félix", Nationality: "Portugal", Position: "forward", Age: 24, Fee: 70000000, Salary: 9500000, Technique: 88, Mental: 83, Physique: 82, InjuryDays: 0, Lined: true, Familiarity: 87, Fitness: 92, Happiness: 86},
+>>>>>>> 4e7b465 (add get matches test)
 	}
 	log.Println("Starting server on port ", port)
 	http.ListenAndServe(fmt.Sprintf(":%s", port), r)
