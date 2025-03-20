@@ -1,5 +1,5 @@
 SELECT 
- m.id AS match_id,
+    m.id AS match_id,
     ht.name AS home_team_name,
     at.name AS away_team_name,
     hs.formation AS home_formation,
@@ -23,4 +23,4 @@ JOIN oft.teams ht ON m.home_team = ht.id
 JOIN oft.teams at ON m.away_team = at.id
 JOIN oft.strategies hs ON hs.team_id = m.home_team
 JOIN oft.strategies away_strategy ON away_strategy.team_id = m.away_team
-ORDER BY m.date ASC;
+WHERE m.id = $1;

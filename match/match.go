@@ -5,6 +5,7 @@ import (
 	"log"
 	"sort"
 
+	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/team"
 )
 
@@ -34,6 +35,27 @@ type TeamStats struct {
 	BallPossession int
 	ScoringChances int
 	Goals          int
+}
+
+type Repository interface {
+	GetMatchById(matchId uuid.UUID) (*Match, error)
+}
+
+func NewApp(repository Repository) AppService {
+	return AppService{repo: repository}
+}
+
+type AppService struct {
+	repo Repository
+}
+
+func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
+	m, err := a.repo.GetMatchById(matchID)
+	if err != nil {
+		return Result{}, fmt.Errorf("error retrieving match: %w", err)
+	}
+
+	return m.Play()
 }
 
 func (m Match) Play() (Result, error) {
