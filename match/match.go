@@ -37,18 +37,6 @@ type TeamStats struct {
 	Goals          int
 }
 
-type Repository interface {
-	GetMatchById(matchId uuid.UUID) (*Match, error)
-}
-
-func NewApp(repository Repository) AppService {
-	return AppService{repo: repository}
-}
-
-type AppService struct {
-	repo Repository
-}
-
 func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 	m, err := a.repo.GetMatchById(matchID)
 	if err != nil {
