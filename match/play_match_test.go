@@ -2,6 +2,7 @@ package match
 
 import (
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/team"
@@ -16,6 +17,10 @@ type MockMatchRepository struct {
 func (m *MockMatchRepository) GetMatchById(matchID uuid.UUID) (*Match, error) {
 	args := m.Called(matchID)
 	return args.Get(0).(*Match), args.Error(1)
+}
+func (m *MockMatchRepository) PostMatch(homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error {
+	args := m.Called(homeTeamId, awayTeamId, matchDate, homeGoals, awayGoals)
+	return args.Error(0)
 }
 
 func TestPlayMatch(t *testing.T) {
@@ -91,8 +96,6 @@ func TestPlayMatch(t *testing.T) {
 	}
 
 	assert.NotNil(t, result)
-	// assert.Equal(t, 2, result.HomeStats.Goals)
-	// assert.Equal(t, 1, result.AwayStats.Goals)
 
 	mockRepo.AssertExpectations(t)
 }

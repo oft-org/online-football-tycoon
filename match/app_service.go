@@ -1,9 +1,14 @@
 package match
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
 	GetMatchById(matchId uuid.UUID) (*Match, error)
+	PostMatch(homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error
 }
 
 func NewApp(repository Repository) AppService {

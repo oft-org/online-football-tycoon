@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/team"
@@ -42,8 +43,23 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 	if err != nil {
 		return Result{}, fmt.Errorf("error retrieving match: %w", err)
 	}
+	log.Println("______match info_______", m)
 
-	return m.Play()
+	result, err := m.Play()
+	if err != nil {
+		return Result{}, fmt.Errorf("error playing match: %w", err)
+	}
+
+	matchDate := time.Now()
+	homeTeamId := m.HomeMatchStrategy.StrategyTeam.Id
+	awayTeamId := m.AwayMatchStrategy.StrategyTeam.Id
+
+	err = a.repo.PostMatch(homeTeamId, awayTeamId, matchDate, result.HomeStats.Goals, result.AwayStats.Goals)
+	if err != nil {
+		return Result{}, fmt.Errorf("error PostMatch: %w", err)
+	}
+
+	return result, nil
 }
 
 func (m Match) Play() (Result, error) {
