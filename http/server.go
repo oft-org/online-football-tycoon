@@ -36,7 +36,7 @@ func (s *Server) Run(port string) error {
 		c.AbortWithStatus(http.StatusOK)
 	})
 
-	match := s.engine.Group("/team")
+	match := s.engine.Group("/match")
 	match.POST("/play", s.match.PostMatchbyId)
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

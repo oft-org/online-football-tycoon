@@ -53,7 +53,7 @@ VALUES
 
 
 
-INSERT INTO oft.match (id, home_team, away_team, date, home_result, away_result)
+INSERT INTO oft.match (id, home_team, away_team, match_date, home_result, away_result)
 VALUES
     (gen_random_uuid(), 
      (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 

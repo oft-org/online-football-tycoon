@@ -475,8 +475,14 @@ func GreatScoringChance(lineup team.Team) (string, int, int, int, int, error) {
 	prob := ProbabilisticIncrement66()
 	if prob == 1 {
 		shooter = GetRandomForward(lineup.Players)
+		if shooter == nil {
+			return "No player available for scoring", 0, 0, 0, 0, fmt.Errorf("no player available for scoring")
+		}
 	} else {
 		shooter = GetRandomMidfielder(lineup.Players)
+		if shooter == nil {
+			return "No player available for scoring", 0, 0, 0, 0, fmt.Errorf("no player available for scoring")
+		}
 	}
 	prob = ProbabilisticIncrement71()
 	lineupChances = 1
@@ -500,6 +506,9 @@ func CornerKick(lineup, rivalLineup team.Team) (string, int, int, int, int, erro
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	centerer = GetRandomMidfielder(lineup.Players)
+	if centerer == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for centerer")
+	}
 
 	incrementedTechnique := centerer.Technique + rand.Intn(20)
 	prob := CalculateSuccessIndividualEvent(incrementedTechnique)
@@ -535,7 +544,9 @@ func InjuryDuringMatch(lineup team.Team) (string, int, int, int, int, error) {
 	var injuredPlayer *team.Player
 	var sentence string
 	injuredPlayer = GetRandomPlayerExcludingGoalkeeper(lineup.Players)
-
+	if injuredPlayer == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for injuredPlayer")
+	}
 	sentence = fmt.Sprintf("There is a player lying on the ground... wow he is %s, he looks like he will need assistance...", injuredPlayer.LastName)
 
 	return sentence, 0, 0, 0, 0, nil
@@ -547,7 +558,14 @@ func Offside(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 	var sentence string
 
 	passer = GetRandomMidfielder(lineup.Players)
+	if passer == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for passer")
+	}
+
 	playerOffside = GetRandomForward(lineup.Players)
+	if playerOffside == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for playerOffside")
+	}
 
 	lineupChances = 1
 
@@ -574,7 +592,10 @@ func Headed(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
 
 	header = GetRandomPlayerExcludingGoalkeeper(lineup.Players)
 	rivalHeader = GetRandomPlayerExcludingGoalkeeper(rivalLineup.Players)
-
+	if header == nil || rivalHeader == nil {
+		fmt.Println("header or rivalHeader es nil")
+		return "", 0, 0, 0, 0, fmt.Errorf("no rival player available for the header duel")
+	}
 	sentence = "The ball comes through the air, here we have an aerial duel"
 
 	success := CalculateSuccessConfrontation(header.Physique, rivalHeader.Physique)

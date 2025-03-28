@@ -1,8 +1,8 @@
-INSERT INTO eft.match (
+INSERT INTO oft.match (
     id,
     home_team,
     away_team,
-    date,
+    match_date,
     home_result,
     away_result
 ) VALUES (

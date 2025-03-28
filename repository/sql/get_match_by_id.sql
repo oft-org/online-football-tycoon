@@ -17,10 +17,28 @@ SELECT
     away_strategy.defensive_positioning AS away_defensive_positioning,
     away_strategy.build_up_play AS away_build_up_play,
     away_strategy.attack_focus AS away_attack_focus,
-    away_strategy.key_player_usage AS away_key_player_usage
+    away_strategy.key_player_usage AS away_key_player_usage,
+    
+    home_players.id AS home_player_id,
+    home_players.firstname AS home_player_firstname,
+    home_players.lastname AS home_player_lastname,
+    home_players.position AS home_player_position,
+    home_players.technique AS home_player_technique,
+    home_players.mental AS home_player_mental,
+    home_players.physique AS home_player_physique,
+
+    away_players.id AS away_player_id,
+    away_players.firstname AS away_player_firstname,
+    away_players.lastname AS away_player_lastname,
+    away_players.position AS away_player_position,
+    away_players.technique AS away_player_technique,
+    away_players.mental AS away_player_mental,
+    away_players.physique AS away_player_physique
 FROM oft.match m
 JOIN oft.teams ht ON m.home_team = ht.id
 JOIN oft.teams at ON m.away_team = at.id
 JOIN oft.strategies hs ON hs.team_id = m.home_team
 JOIN oft.strategies away_strategy ON away_strategy.team_id = m.away_team
+JOIN oft.players home_players ON home_players.team_id = m.home_team
+JOIN oft.players away_players ON away_players.team_id = m.away_team
 WHERE m.id = $1;

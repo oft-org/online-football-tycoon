@@ -237,7 +237,9 @@ func CalculateRivalChancesByDefensivePositioning(lineup []team.Player, defensive
 }
 
 func CalculatePossessionByBuildUpPlay(lineup []team.Player, buildUpPlay string) (possession float64, err error) {
-
+	if len(lineup) == 0 {
+		return 0, errors.New("La alineación está vacía")
+	}
 	var totalTechniqueOfGoalkeeper, totalMentalityOfGoalkeeper, totalTechniqueOfDefenders, totalMentalOfDefenders int
 	var defenderCount int
 

@@ -23,4 +23,4 @@ JOIN oft.teams ht ON m.home_team = ht.id
 JOIN oft.teams at ON m.away_team = at.id
 JOIN oft.strategies hs ON hs.team_id = m.home_team
 JOIN oft.strategies away_strategy ON away_strategy.team_id = m.away_team
-ORDER BY m.date ASC;
+ORDER BY m.match_date ASC;
