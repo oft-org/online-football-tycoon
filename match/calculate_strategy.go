@@ -69,7 +69,7 @@ func CalculatePossessionChancesByFormation(lineup []team.Player, formation strin
 
 	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
 	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
-	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forward")
 
 	switch formation {
 	case "4-4-2":

@@ -1,6 +1,8 @@
 SELECT 
     m.id AS match_id,
+    m.home_team AS home_team_id,
     ht.name AS home_team_name,
+    m.away_team AS away_team_id,
     at.name AS away_team_name,
     hs.formation AS home_formation,
     hs.playing_style AS home_playing_style,

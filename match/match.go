@@ -54,6 +54,8 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 	homeTeamId := m.HomeMatchStrategy.StrategyTeam.Id
 	awayTeamId := m.AwayMatchStrategy.StrategyTeam.Id
 
+	log.Println("homeTeamId, awayTeamId", homeTeamId, awayTeamId)
+
 	err = a.repo.PostMatch(homeTeamId, awayTeamId, matchDate, result.HomeStats.Goals, result.AwayStats.Goals)
 	if err != nil {
 		return Result{}, fmt.Errorf("error PostMatch: %w", err)

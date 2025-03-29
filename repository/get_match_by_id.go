@@ -16,13 +16,15 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 	var m match.Match
 	var homeTeam, awayTeam team.Team
 	var homeStrategy, awayStrategy match.Strategy
-	var id uuid.UUID
+	var id, homeTeamId, awayTeamId uuid.UUID
 
 	for rows.Next() {
 		var homePlayer, awayPlayer team.Player
 		err := rows.Scan(
 			&id,
+			&homeTeamId,
 			&homeTeam.Name,
+			&awayTeamId,
 			&awayTeam.Name,
 			&homeStrategy.Formation,
 			&homeStrategy.PlayingStyle,
@@ -60,6 +62,9 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		homeTeam.Id = homeTeamId
+		awayTeam.Id = awayTeamId
 
 		homeTeam.Players = append(homeTeam.Players, homePlayer)
 		awayTeam.Players = append(awayTeam.Players, awayPlayer)
