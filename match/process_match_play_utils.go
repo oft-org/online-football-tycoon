@@ -18,9 +18,9 @@ func CalculateNumberOfMatchEvents(homeGameTempo, awayGameTempo string) (int, err
 		"fast_tempo":     3,
 	}
 
-	lineupTempo := tempoMap[homeGameTempo]
-	rivalTempo := tempoMap[awayGameTempo]
-	matchTempo := lineupTempo + rivalTempo
+	homeTempo := tempoMap[homeGameTempo]
+	awayTempo := tempoMap[awayGameTempo]
+	matchTempo := homeTempo + awayTempo
 	var numberOfMatchEvents int
 
 	switch {
@@ -40,46 +40,46 @@ func CalculateNumberOfMatchEvents(homeGameTempo, awayGameTempo string) (int, err
 	return numberOfMatchEvents, nil
 }
 
-func DistributeMatchEvents(lineup, rivalLineup team.Team, numberOfMatchEvents int) (int, int, error) {
-	log.Println("lineup en DistributeMatchEvents", lineup)
-	log.Println("rival en DistributeMatchEvents", rivalLineup)
-	lineupTotalQuality, err := CalculateQuality(lineup)
+func DistributeMatchEvents(home, awayHome team.Team, numberOfMatchEvents int) (int, int, error) {
+	log.Println("home en DistributeMatchEvents", home)
+	log.Println("away en DistributeMatchEvents", awayHome)
+	homeTotalQuality, err := CalculateQuality(home)
 	if err != nil {
 		return 0, 0, err
 	}
-	log.Println("total lineup Quality", lineupTotalQuality)
-	rivalTotalQuality, err := CalculateQuality(rivalLineup)
+	log.Println("total home Quality", homeTotalQuality)
+	awayTotalQuality, err := CalculateQuality(awayHome)
 	if err != nil {
 		return 0, 0, err
 	}
-	log.Println("total rival Quality", rivalTotalQuality)
-	allQuality := lineupTotalQuality + rivalTotalQuality
-	var lineupEvents int
-	lineupProportion := float64(lineupTotalQuality) / float64(allQuality)
+	log.Println("total away Quality", awayTotalQuality)
+	allQuality := homeTotalQuality + awayTotalQuality
+	var homeEvents int
+	homeProportion := float64(homeTotalQuality) / float64(allQuality)
 
-	lineupEvents = int(lineupProportion*float64(numberOfMatchEvents)) + rand.Intn(4) + 2
+	homeEvents = int(homeProportion*float64(numberOfMatchEvents)) + rand.Intn(4) + 2
 
-	log.Printf("number of lineup events %v ANTES DE RANDOMFACTOR", lineupEvents)
+	log.Printf("number of home events %v ANTES DE RANDOMFACTOR", homeEvents)
 
 	randomFactor := rand.Intn(11) - 5
 
-	lineupEvents += randomFactor
+	homeEvents += randomFactor
 
-	rivalEvents := numberOfMatchEvents - lineupEvents
-	log.Printf("number of lineup events %v, rival events %v Despues DE RANDOMFACTOR", lineupEvents, rivalEvents)
-	if lineupEvents <= 0 {
-		lineupEvents = 0
+	awayEvents := numberOfMatchEvents - homeEvents
+	log.Printf("number of home events %v, away events %v Despues DE RANDOMFACTOR", homeEvents, awayEvents)
+	if homeEvents <= 0 {
+		homeEvents = 0
 	}
-	if rivalEvents < 0 {
-		rivalEvents = 0
+	if awayEvents < 0 {
+		awayEvents = 0
 	}
-	log.Printf("number of lineup events %v, rival events %v", lineupEvents, rivalEvents)
-	return lineupEvents, rivalEvents, nil
+	log.Printf("number of home events %v, away events %v", homeEvents, awayEvents)
+	return homeEvents, awayEvents, nil
 }
 
-func CalculateQuality(lineup team.Team) (int, error) {
+func CalculateQuality(home team.Team) (int, error) {
 	var totalTechnique, totalMental, totalPhysique int
-	for _, player := range lineup.Players {
+	for _, player := range home.Players {
 		totalTechnique += player.Technique
 		totalMental += player.Mental
 		totalPhysique += player.Physique
@@ -97,9 +97,9 @@ func clamp(value int, min int, max int) int {
 	return value
 }
 
-func GetRandomDefender(lineup []team.Player) *team.Player {
+func GetRandomDefender(home []team.Player) *team.Player {
 	var defenders []team.Player
-	for _, player := range lineup {
+	for _, player := range home {
 		if player.Position == "defender" {
 			defenders = append(defenders, player)
 		}
@@ -108,9 +108,9 @@ func GetRandomDefender(lineup []team.Player) *team.Player {
 	return GetRandomPlayer(defenders)
 }
 
-func GetRandomMidfielder(lineup []team.Player) *team.Player {
+func GetRandomMidfielder(home []team.Player) *team.Player {
 	var midfielders []team.Player
-	for _, player := range lineup {
+	for _, player := range home {
 		if player.Position == "midfielder" {
 			midfielders = append(midfielders, player)
 		}
@@ -119,9 +119,9 @@ func GetRandomMidfielder(lineup []team.Player) *team.Player {
 	return GetRandomPlayer(midfielders)
 }
 
-func GetRandomForward(lineup []team.Player) *team.Player {
+func GetRandomForward(home []team.Player) *team.Player {
 	var forwards []team.Player
-	for _, player := range lineup {
+	for _, player := range home {
 		if player.Position == "forward" {
 			forwards = append(forwards, player)
 		}
@@ -130,9 +130,9 @@ func GetRandomForward(lineup []team.Player) *team.Player {
 	return GetRandomPlayer(forwards)
 }
 
-func GetGoalkeeper(lineup []team.Player) *team.Player {
+func GetGoalkeeper(home []team.Player) *team.Player {
 	var goalkeepers []team.Player
-	for _, player := range lineup {
+	for _, player := range home {
 		if player.Position == "goalkeeper" {
 			goalkeepers = append(goalkeepers, player)
 		}
@@ -141,9 +141,9 @@ func GetGoalkeeper(lineup []team.Player) *team.Player {
 	return GetRandomPlayer(goalkeepers)
 }
 
-func GetRandomPlayerExcludingGoalkeeper(lineup []team.Player) *team.Player {
+func GetRandomPlayerExcludingGoalkeeper(home []team.Player) *team.Player {
 	var playersExcludingGoalkeepers []team.Player
-	for _, player := range lineup {
+	for _, player := range home {
 		if player.Position != "goalkeeper" {
 			playersExcludingGoalkeepers = append(playersExcludingGoalkeepers, player)
 		}
@@ -173,224 +173,231 @@ type EventResult struct {
 	Team   string `json:"team"`
 }
 
-func GenerateEvents(lineup, rivalLineup team.Team, numberOfLineupEvents, numberOfRivalEvents int) ([]EventResult, []EventResult, int, int, int, int) {
+func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEvents int) MatchEventStats {
 
-	lineupEvents := []Event{
+	homeEvents := []Event{
 		{
 			"Pase clave",
 			func() (string, int, int, int, int, error) {
-				return KeyPass(lineup, rivalLineup)
+				return KeyPass(home, awayHome)
 			},
 		},
 		{
 			"Remate a puerta",
 			func() (string, int, int, int, int, error) {
-				return Shot(lineup, rivalLineup, GetRandomForward(lineup.Players))
+				return Shot(home, awayHome, GetRandomForward(home.Players))
 			},
 		},
 		{
 			"Penalty",
 			func() (string, int, int, int, int, error) {
-				return PenaltyKick(lineup, rivalLineup)
+				return PenaltyKick(home, awayHome)
 			},
 		},
 		{
 			"Tiro lejano",
 			func() (string, int, int, int, int, error) {
-				return LongShot(lineup, rivalLineup)
+				return LongShot(home, awayHome)
 			},
 		},
 		{
 			" Lanzamiento de Falta Indirecta",
 			func() (string, int, int, int, int, error) {
-				return IndirectFreeKick(lineup, rivalLineup)
+				return IndirectFreeKick(home, awayHome)
 			},
 		},
 		{
 			"Regate",
 			func() (string, int, int, int, int, error) {
-				return Dribble(lineup, rivalLineup)
+				return Dribble(home, awayHome)
 			},
 		},
 		{
 			"Falta",
 			func() (string, int, int, int, int, error) {
-				return Foul(lineup, rivalLineup, nil)
+				return Foul(home, awayHome, nil)
 			},
 		},
 
 		{
 			"Gran Ocasión",
 			func() (string, int, int, int, int, error) {
-				return GreatScoringChance(lineup)
+				return GreatScoringChance(home)
 			},
 		},
 		{
 			"Córner",
 			func() (string, int, int, int, int, error) {
-				return CornerKick(lineup, rivalLineup)
+				return CornerKick(home, awayHome)
 			},
 		},
 		{
 			"Fuera de Juego",
 			func() (string, int, int, int, int, error) {
-				return Offside(lineup, rivalLineup)
+				return Offside(home, awayHome)
 			},
 		},
 		{
 			"Cabezazo",
 			func() (string, int, int, int, int, error) {
-				return Headed(lineup, rivalLineup)
+				return Headed(home, awayHome)
 			},
 		}, {
 			"Contragolpe",
 			func() (string, int, int, int, int, error) {
-				return CounterAttack(lineup, rivalLineup)
+				return CounterAttack(home, awayHome)
 			},
 		},
 	}
 
-	rivalEvents := []Event{
+	awayEvents := []Event{
 		{
 			"Pase clave",
 			func() (string, int, int, int, int, error) {
-				return KeyPass(rivalLineup, lineup)
+				return KeyPass(awayHome, home)
 			},
 		},
 		{
 			"Remate a puerta",
 			func() (string, int, int, int, int, error) {
-				return Shot(rivalLineup, lineup, GetRandomForward(rivalLineup.Players))
+				return Shot(awayHome, home, GetRandomForward(awayHome.Players))
 			},
 		},
 		{
 			"Penalty",
 			func() (string, int, int, int, int, error) {
-				return PenaltyKick(rivalLineup, lineup)
+				return PenaltyKick(awayHome, home)
 			},
 		},
 		{
 			"Tiro lejano",
 			func() (string, int, int, int, int, error) {
-				return LongShot(rivalLineup, lineup)
+				return LongShot(awayHome, home)
 			},
 		},
 		{
 			" Lanzamiento de Falta Indirecta",
 			func() (string, int, int, int, int, error) {
-				return IndirectFreeKick(rivalLineup, lineup)
+				return IndirectFreeKick(awayHome, home)
 			},
 		},
 		{
 			"Regate",
 			func() (string, int, int, int, int, error) {
-				return Dribble(rivalLineup, lineup)
+				return Dribble(awayHome, home)
 			},
 		},
 		{
 			"Falta",
 			func() (string, int, int, int, int, error) {
-				return Foul(rivalLineup, lineup, nil)
+				return Foul(awayHome, home, nil)
 			},
 		},
 		{
 			"Gran Ocasión",
 			func() (string, int, int, int, int, error) {
-				return GreatScoringChance(rivalLineup)
+				return GreatScoringChance(awayHome)
 			},
 		},
 		{
 			"Córner",
 			func() (string, int, int, int, int, error) {
-				return CornerKick(rivalLineup, lineup)
+				return CornerKick(awayHome, home)
 			},
 		},
 		{
 			"Fuera de Juego",
 			func() (string, int, int, int, int, error) {
-				return Offside(rivalLineup, lineup)
+				return Offside(awayHome, home)
 			},
 		},
 		{
 			"Cabezazo",
 			func() (string, int, int, int, int, error) {
-				return Headed(rivalLineup, lineup)
+				return Headed(awayHome, home)
 			},
 		}, {
 			"Contragolpe",
 			func() (string, int, int, int, int, error) {
-				return CounterAttack(rivalLineup, lineup)
+				return CounterAttack(awayHome, home)
 			},
 		},
 	}
-	var lineupResults []EventResult
-	var rivalResults []EventResult
-	var lineupChances, rivalChances, lineupGoals, rivalGoals int
+	var homeResults []EventResult
+	var awayResults []EventResult
+	var homeChances, awayChances, homeGoals, awayGoals int
 
-	for i := 0; i < numberOfLineupEvents; i++ {
-		event := lineupEvents[rand.Intn(len(lineupEvents))]
-		log.Println("evento de tu equipo", event)
-		result, newLineupChances, newRivalChances, newLineupGoals, newRivalGoals, err := event.Execute()
+	for i := 0; i < numberOfHomeEvents; i++ {
+		event := homeEvents[rand.Intn(len(homeEvents))]
+		log.Println("team event", event)
+		result, newHomeChances, newAwayChances, newHomeGoals, newAwayGoals, err := event.Execute()
 		if err != nil {
-			fmt.Printf("Error executing lineup event: %v\n", err)
+			fmt.Printf("Error executing home event: %v\n", err)
 			continue
 		}
 		if result == "" {
-			fmt.Println("Generated empty event for lineup!")
+			fmt.Println("Generated empty event for home!")
 		} else {
-			fmt.Printf("Generated lineup event: %s\n", result)
+			fmt.Printf("Generated home event: %s\n", result)
 		}
-		lineupChances += newLineupChances
-		rivalChances += newRivalChances
-		lineupGoals += newLineupGoals
-		rivalGoals += newRivalGoals
+		homeChances += newHomeChances
+		awayChances += newAwayChances
+		homeGoals += newHomeGoals
+		awayGoals += newAwayGoals
 
 		minute := rand.Intn(90)
-		lineupResults = append(lineupResults, EventResult{
-			Event:  result + fmt.Sprintf(" para el equipo %s", lineup.Name),
+		homeResults = append(homeResults, EventResult{
+			Event:  result + fmt.Sprintf(" for the team %s", home.Name),
 			Minute: minute,
-			Team:   fmt.Sprintf(" %s", lineup.Name),
+			Team:   fmt.Sprintf(" %s", home.Name),
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
 	}
-	for i := 0; i < numberOfRivalEvents; i++ {
-		event := rivalEvents[rand.Intn(len(rivalEvents))]
-		log.Println("evento del rival", event)
-		result, newRivalChances, newLineupChances, newRivalGoals, newLineupGoals, err := event.Execute()
+	for i := 0; i < numberOfAwayEvents; i++ {
+		event := awayEvents[rand.Intn(len(awayEvents))]
+		log.Println("away event", event)
+		result, newAwayChances, newHomeChances, newAwayGoals, newHomeGoals, err := event.Execute()
 		if err != nil {
-			fmt.Printf("Error executing rival event: %v\n", err)
+			fmt.Printf("Error executing away event: %v\n", err)
 			continue
 		}
 
-		lineupChances += newLineupChances
-		rivalChances += newRivalChances
-		lineupGoals += newLineupGoals
-		rivalGoals += newRivalGoals
+		homeChances += newHomeChances
+		awayChances += newAwayChances
+		homeGoals += newHomeGoals
+		awayGoals += newAwayGoals
 
 		minute := rand.Intn(90)
-		rivalResults = append(rivalResults, EventResult{
-			Event:  result + " para " + rivalLineup.Name,
+		awayResults = append(awayResults, EventResult{
+			Event:  result + " para " + awayHome.Name,
 			Minute: minute,
-			Team:   rivalLineup.Name,
+			Team:   awayHome.Name,
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
 	}
 
-	return lineupResults, rivalResults, lineupChances, rivalChances, lineupGoals, rivalGoals
+	return MatchEventStats{
+		HomeEvents:       homeResults,
+		AwayEvents:       awayResults,
+		HomeScoreChances: homeChances,
+		AwayScoreChances: awayChances,
+		HomeGoals:        homeGoals,
+		AwayGoals:        awayGoals,
+	}
 }
 
-func CalculateTotalQuality(lineupTotalTechnique, lineupTotalMental, lineupTotalPhysique, rivalTotalTechnique, rivalTotalMental, rivalTotalPhysique int) (int, int, int, error) {
+func CalculateTotalQuality(homeTotalTechnique, homeTotalMental, homeTotalPhysique, awayTotalTechnique, awayTotalMental, awayTotalPhysique int) (int, int, int, error) {
 
-	lineupTotalQuality := lineupTotalTechnique + lineupTotalMental + lineupTotalPhysique
-	rivalTotalQuality := rivalTotalTechnique + rivalTotalMental + rivalTotalPhysique
-	allQuality := lineupTotalQuality + rivalTotalQuality
+	homeTotalQuality := homeTotalTechnique + homeTotalMental + homeTotalPhysique
+	awayTotalQuality := awayTotalTechnique + awayTotalMental + awayTotalPhysique
+	allQuality := homeTotalQuality + awayTotalQuality
 
 	if allQuality == 0 {
 		return 0, 0, 0, errors.New("error. quality cant be nil")
 	}
 
-	return lineupTotalQuality, rivalTotalQuality, allQuality, nil
+	return homeTotalQuality, awayTotalQuality, allQuality, nil
 
 }

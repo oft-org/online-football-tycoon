@@ -13,42 +13,42 @@ func CalculateResultOfStrategy(lineup []team.Player, formation, playingStyle, ga
 
 	teamPossessionFormation, teamChancesFormation, rivalChancesFormation, err := CalculatePossessionChancesByFormation(lineup, formation)
 	if err != nil {
-		return nil, fmt.Errorf("Error en la formación: %v", err)
+		return nil, fmt.Errorf("Error in formation: %v", err)
 	}
 
 	teamPossessionStyle, teamChancesStyle, rivalChancesStyle, physiqueStyle, err := CalculatePossessionChancesByPlayingStyle(lineup, playingStyle)
 	if err != nil {
-		return nil, fmt.Errorf("Error en el estilo de juego: %v", err)
+		return nil, fmt.Errorf("Error in playing stile: %v", err)
 	}
 
 	teamPossessionTempo, teamChancesTempo, rivalChancesTempo, physiqueTempo, err := CalculatePossessionChancesByGameTempo(gameTempo)
 	if err != nil {
-		return nil, fmt.Errorf("Error en el tempo del juego: %v", err)
+		return nil, fmt.Errorf("Error in game tempo: %v", err)
 	}
 
 	teamPossessionPassing, rivalChancesPassing, err := CalculatePossessionChancesByPassingStyle(passingStyle)
 	if err != nil {
-		return nil, fmt.Errorf("Error en el estilo de pase: %v", err)
+		return nil, fmt.Errorf("Error in pass stile: %v", err)
 	}
 
 	rivalChancesDefensivePositioning, physiqueDefensive, err := CalculateRivalChancesByDefensivePositioning(lineup, defensivePositioning)
 	if err != nil {
-		return nil, fmt.Errorf("Error en el posicionamiento defensivo: %v", err)
+		return nil, fmt.Errorf("Error in defensive postioning: %v", err)
 	}
 
 	teamPossessionBuildUpPlay, err := CalculatePossessionByBuildUpPlay(lineup, buildUpPlay)
 	if err != nil {
-		return nil, fmt.Errorf("Error en el estilo de build-up play: %v", err)
+		return nil, fmt.Errorf("Error in build-up play: %v", err)
 	}
 
 	rivalChancesAttackFocus, err := CalculateRivalChancesByAttackFocus(lineup, attackFocus)
 	if err != nil {
-		return nil, fmt.Errorf("Error en el enfoque de ataque: %v", err)
+		return nil, fmt.Errorf("Error in rival chances by attack focus: %v", err)
 	}
 
 	teamPossessionKeyPlayer, teamChancesKeyPlayer, err := CalculateRivalChancesByKeyPlayerUsage(lineup, keyPlayerUsage)
 	if err != nil {
-		return nil, fmt.Errorf("Error en el uso del jugador clave: %v", err)
+		return nil, fmt.Errorf("Error in rival chances by key player usage: %v", err)
 	}
 
 	totalTeamPossession := (teamPossessionFormation + teamPossessionStyle + teamPossessionTempo + teamPossessionPassing + teamPossessionBuildUpPlay + teamPossessionKeyPlayer) / 6
@@ -126,7 +126,7 @@ func CalculatePossessionChancesByFormation(lineup []team.Player, formation strin
 		}
 
 	default:
-		return 0, 0, 0, errors.New("formación desconocida")
+		return 0, 0, 0, errors.New("unknown formation")
 	}
 }
 
@@ -163,7 +163,7 @@ func CalculatePossessionChancesByPlayingStyle(lineup []team.Player, playingStyle
 		}
 		return 0.8, 0.3, 0.5, 110, nil
 	default:
-		return 0, 0, 0, 0, errors.New("playingStyle desconocido")
+		return 0, 0, 0, 0, errors.New("unknown playingStyle")
 	}
 }
 
@@ -177,7 +177,7 @@ func CalculatePossessionChancesByGameTempo(gameTempo string) (teamPossession, te
 		return 1.1, 0.6, 0.7, 250, nil
 
 	default:
-		return 0, 0, 0, 0, errors.New("gameTempo desconocido")
+		return 0, 0, 0, 0, errors.New("unknown gameTempo")
 	}
 }
 
@@ -189,7 +189,7 @@ func CalculatePossessionChancesByPassingStyle(passingStyle string) (teamPossessi
 		return 0.8, 0.9, nil
 
 	default:
-		return 0, 0, errors.New("gameTempo desconocido")
+		return 0, 0, errors.New("unknown gameTempo")
 	}
 }
 
@@ -232,13 +232,13 @@ func CalculateRivalChancesByDefensivePositioning(lineup []team.Player, defensive
 		return 1.3, -120, nil
 
 	default:
-		return 0, 0, errors.New("Estilo de posicionamiento defensivo desconocido")
+		return 0, 0, errors.New("unknown defensive positioning")
 	}
 }
 
 func CalculatePossessionByBuildUpPlay(lineup []team.Player, buildUpPlay string) (possession float64, err error) {
 	if len(lineup) == 0 {
-		return 0, errors.New("La alineación está vacía")
+		return 0, errors.New("empty lineup")
 	}
 	var totalTechniqueOfGoalkeeper, totalMentalityOfGoalkeeper, totalTechniqueOfDefenders, totalMentalOfDefenders int
 	var defenderCount int
@@ -256,7 +256,7 @@ func CalculatePossessionByBuildUpPlay(lineup []team.Player, buildUpPlay string) 
 	}
 
 	if defenderCount == 0 {
-		return 0, errors.New("No hay defensores en la alineación")
+		return 0, errors.New("There are no defenders in the lineup")
 	}
 
 	totalQualityOfGoalkeeper := totalTechniqueOfGoalkeeper + totalMentalityOfGoalkeeper
@@ -291,7 +291,7 @@ func CalculatePossessionByBuildUpPlay(lineup []team.Player, buildUpPlay string) 
 		return 0.9, nil
 
 	default:
-		return 0, errors.New("Estilo de buildUpPlay desconocido")
+		return 0, errors.New("unknown buildUpPlay")
 	}
 }
 
@@ -312,7 +312,7 @@ func CalculateRivalChancesByAttackFocus(lineup []team.Player, attackFocus string
 	}
 
 	if forwardCount == 0 {
-		return 0, errors.New("No hay delanteros en la alineación")
+		return 0, errors.New("There are no forwarders in the lineup")
 	}
 
 	totalQualityOfMidfield := totalTechniqueOfMidfield + totalPhysiqueOfMidfild
@@ -349,7 +349,7 @@ func CalculateRivalChancesByAttackFocus(lineup []team.Player, attackFocus string
 		return 0.91, nil
 
 	default:
-		return 0, errors.New("Estilo de AttackFocus desconocido")
+		return 0, errors.New("unknown AttackFocus")
 	}
 }
 
@@ -390,7 +390,7 @@ func CalculateRivalChancesByKeyPlayerUsage(lineup []team.Player, keyPlayerUsage 
 		return 1.3, 0.98, nil
 
 	default:
-		return 0, 0, errors.New("Estilo de KeyPlayerUsage desconocido")
+		return 0, 0, errors.New("unknown KeyPlayerUsage")
 	}
 }
 
@@ -413,7 +413,7 @@ func getTwoBestPlayers(players []team.Player, position string) (int, error) {
 	}
 
 	if foundPlayers < 2 {
-		return 0, errors.New("no hay suficientes jugadores en la alineación")
+		return 0, errors.New("there are not enough players in the lineup")
 	}
 
 	totalPlayersQuality := bestPlayers[0].Technique + bestPlayers[0].Mental + bestPlayers[0].Physique +

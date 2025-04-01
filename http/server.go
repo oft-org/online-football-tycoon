@@ -3,7 +3,6 @@ package http
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -31,10 +30,6 @@ func (s *Server) Run(port string) error {
 		MaxAge:           12 * time.Hour,
 		AllowAllOrigins:  true,
 	}))
-
-	s.engine.GET("", func(c *gin.Context) {
-		c.AbortWithStatus(http.StatusOK)
-	})
 
 	match := s.engine.Group("/match")
 	match.POST("/play", s.match.PostMatchbyId)
