@@ -90,7 +90,7 @@ func KeyPass(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 	log.Printf("Selected passer: %+v, receiver: %+v", passer, receiver)
 
 	if passer == nil || receiver == nil {
-		return "no hay suficientes jugadores disponibles para realizar un pase", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
+		return "There are not enough players available to make a pass", 0, 0, 0, 0, fmt.Errorf("There are not enough players available to make a pass")
 	}
 	successfulPass := CalculateSuccessIndividualEvent(passer.Technique)
 	var sentence string
@@ -120,7 +120,7 @@ func KeyPass(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 }
 
 func Shot(lineup, rivalLineup team.Team, passer *team.Player) (string, int, int, int, int, error) {
-	//TODO FUNCION QUE IMPRIME UN VACÍO
+
 	shooter := GetRandomForward(lineup.Players)
 	if shooter == nil {
 		return "no forward player found in lineup", 0, 0, 0, 0, errors.New("no forward player found in lineup")
@@ -145,20 +145,20 @@ func Shot(lineup, rivalLineup team.Team, passer *team.Player) (string, int, int,
 	if successfulAgainstDefender == 1 {
 		sentence = fmt.Sprintf("%s escapes from %s's marking...", shooter.LastName, defender.LastName)
 		lineupChances = 1
-		log.Println("el delantero supera al defensa")
+		log.Println("the forward beats the defender")
 
 		log.Printf("%s supera a %s.\n", shooter.LastName, defender.LastName)
 
 		successfulAgainstGoalkeeper := CalculateSuccessConfrontation(shooter.Technique, goalkeeper.Technique)
 
 		if successfulAgainstGoalkeeper == 1 {
-			sentence += fmt.Sprintf(" %s shoots and also beats the goalkeeper... GOOOOOL! %s is just a spectator in the play %s scores a goal!\n", shooter.LastName, goalkeeper.LastName, shooter.LastName)
+			sentence += fmt.Sprintf(" %s shoots and also beats the goalkeeper... GOOOOOAL! %s is just a spectator in the play %s scores a goal!\n", shooter.LastName, goalkeeper.LastName, shooter.LastName)
 			log.Println(sentence)
-			log.Println("el delantero también supera al portero, es GOOL")
+			log.Println("The striker also beats the goalkeeper, it's a GOAL")
 			lineupGoals = 1
 
 			if passer != nil {
-				log.Printf("El pasador existe y es: %v", passer)
+				log.Printf("the passer is: %v", passer)
 
 			}
 
@@ -170,7 +170,7 @@ func Shot(lineup, rivalLineup team.Team, passer *team.Player) (string, int, int,
 		}
 		lineupChances = 1
 	} else {
-		log.Printf("el defensa bloqueó el disparo en primera instancia")
+		log.Printf("the defender blocked the shot in the first instance")
 		sentence += fmt.Sprintf(" %s's shot is blocked by %s.\n", shooter.LastName, defender.LastName)
 		log.Println(sentence)
 
@@ -199,7 +199,7 @@ func PenaltyKick(lineup, rivalLineup team.Team) (string, int, int, int, int, err
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	if successfulPenalty == 1 {
-		sentence := fmt.Sprintf("GOOOOOL! %s scores from the penalty spot!", shooter.LastName)
+		sentence := fmt.Sprintf("GOOOOOAL! %s scores from the penalty spot!", shooter.LastName)
 		log.Println(sentence)
 
 		lineupGoals = 1
@@ -237,7 +237,7 @@ func LongShot(lineup, rivalLineup team.Team) (string, int, int, int, int, error)
 	rivalGoals := 0
 
 	if successfulLongShot == 1 {
-		sentence := fmt.Sprintf("GOOOOOL! %s scores from long distance!\n", shooter.LastName)
+		sentence := fmt.Sprintf("GOOOOOAL! %s scores from long distance!\n", shooter.LastName)
 		log.Printf("GOAL! %s scores a long shot!\n", shooter.LastName)
 
 		lineupGoals = 1
@@ -287,7 +287,7 @@ func IndirectFreeKick(lineup, rivalLineup team.Team) (string, int, int, int, int
 	rivalGoals := 0
 
 	if successfulLongShot == 1 {
-		sentence := fmt.Sprintf("%s takes the free kick... It is a center to the are.. %s and %s jump to fight for the center... %s head the ball...%s can't do anything...  GOOOOOL! %s scores!\n", shooter.LastName, defenderOnAttack.LastName, rivalDefender.LastName, defenderOnAttack.LastName, goalkeeper.LastName, defenderOnAttack.LastName)
+		sentence := fmt.Sprintf("%s takes the free kick... It is a center to the are.. %s and %s jump to fight for the center... %s head the ball...%s can't do anything...  GOOOOOAL! %s scores!\n", shooter.LastName, defenderOnAttack.LastName, rivalDefender.LastName, defenderOnAttack.LastName, goalkeeper.LastName, defenderOnAttack.LastName)
 		log.Printf("GOAL! %s scores a long shot!\n", shooter.LastName)
 
 		lineupGoals = 1
@@ -324,7 +324,7 @@ func Dribble(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 	log.Printf("Selected passer: %+v, receiver: %+v", dribbler, defender)
 
 	if dribbler == nil || defender == nil {
-		return "no hay suficientes jugadores disponibles para realizar un pase", 0, 0, 0, 0, fmt.Errorf("no hay suficientes jugadores disponibles para realizar un pase")
+		return "There are not enough players available to make a pass", 0, 0, 0, 0, fmt.Errorf("There are not enough players available to make a pass")
 	}
 
 	sentence = fmt.Sprintf("%s tries a dribbling", dribbler.LastName)
@@ -422,7 +422,7 @@ func YellowOrRedCard(lineup team.Team, defender *team.Player) (string, int, int,
 	} else {
 
 		sentence += fmt.Sprintf("The referee gives %v a red card", defender.LastName)
-		log.Println("el jugador fue expulsado de la alineación")
+		log.Println("the player was expelled from the lineup")
 
 	}
 
@@ -451,7 +451,7 @@ func DirectFreeKick(lineup, rivalLineup team.Team) (string, int, int, int, int, 
 	rivalGoals := 0
 
 	if successfulLongShot == 1 {
-		sentence := fmt.Sprintf("GOOOOOL! %s scores from direct free kick distance!\n", shooter.LastName)
+		sentence := fmt.Sprintf("GOOOOOAL! %s scores from direct free kick distance!\n", shooter.LastName)
 		log.Printf("GOAL! %s scores a free kick long shot!\n", shooter.LastName)
 
 		lineupGoals = 1
@@ -475,8 +475,14 @@ func GreatScoringChance(lineup team.Team) (string, int, int, int, int, error) {
 	prob := ProbabilisticIncrement66()
 	if prob == 1 {
 		shooter = GetRandomForward(lineup.Players)
+		if shooter == nil {
+			return "No player available for scoring", 0, 0, 0, 0, fmt.Errorf("no player available for scoring")
+		}
 	} else {
 		shooter = GetRandomMidfielder(lineup.Players)
+		if shooter == nil {
+			return "No player available for scoring", 0, 0, 0, 0, fmt.Errorf("no player available for scoring")
+		}
 	}
 	prob = ProbabilisticIncrement71()
 	lineupChances = 1
@@ -500,6 +506,9 @@ func CornerKick(lineup, rivalLineup team.Team) (string, int, int, int, int, erro
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
 	centerer = GetRandomMidfielder(lineup.Players)
+	if centerer == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for centerer")
+	}
 
 	incrementedTechnique := centerer.Technique + rand.Intn(20)
 	prob := CalculateSuccessIndividualEvent(incrementedTechnique)
@@ -515,7 +524,7 @@ func CornerKick(lineup, rivalLineup team.Team) (string, int, int, int, int, erro
 		}
 		prob = CalculateSuccessConfrontation(attacker.Physique, defender.Physique)
 		if prob == 1 {
-			sentence = fmt.Sprintf("GOOOOOL, %s took the corner very well, and %s beats %s with a incredible jump and heads at goal", centerer.LastName, attacker.LastName, defender.LastName)
+			sentence = fmt.Sprintf("GOOOOOAL, %s took the corner very well, and %s beats %s with a incredible jump and heads at goal", centerer.LastName, attacker.LastName, defender.LastName)
 			lineupGoals = 1
 
 			return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
@@ -535,7 +544,9 @@ func InjuryDuringMatch(lineup team.Team) (string, int, int, int, int, error) {
 	var injuredPlayer *team.Player
 	var sentence string
 	injuredPlayer = GetRandomPlayerExcludingGoalkeeper(lineup.Players)
-
+	if injuredPlayer == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for injuredPlayer")
+	}
 	sentence = fmt.Sprintf("There is a player lying on the ground... wow he is %s, he looks like he will need assistance...", injuredPlayer.LastName)
 
 	return sentence, 0, 0, 0, 0, nil
@@ -547,7 +558,14 @@ func Offside(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 	var sentence string
 
 	passer = GetRandomMidfielder(lineup.Players)
+	if passer == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for passer")
+	}
+
 	playerOffside = GetRandomForward(lineup.Players)
+	if playerOffside == nil {
+		return "", 0, 0, 0, 0, fmt.Errorf("no midfielder found for playerOffside")
+	}
 
 	lineupChances = 1
 
@@ -574,7 +592,10 @@ func Headed(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
 
 	header = GetRandomPlayerExcludingGoalkeeper(lineup.Players)
 	rivalHeader = GetRandomPlayerExcludingGoalkeeper(rivalLineup.Players)
-
+	if header == nil || rivalHeader == nil {
+		fmt.Println("header or rivalHeader es nil")
+		return "", 0, 0, 0, 0, fmt.Errorf("no rival player available for the header duel")
+	}
 	sentence = "The ball comes through the air, here we have an aerial duel"
 
 	success := CalculateSuccessConfrontation(header.Physique, rivalHeader.Physique)

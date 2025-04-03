@@ -3,14 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/match"
 	"github.com/robertobouses/online-football-tycoon/team"
-	"log"
-	"net/http"
-	"os"
 )
 
 func main() {

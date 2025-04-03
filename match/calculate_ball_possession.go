@@ -34,17 +34,17 @@ func CalculateBallPossession(lineupTotalTechnique, rivalTotalTechnique, lineupTo
 	case float64(lineupTotalTechnique) <= float64(rivalTotalTechnique)*1.1:
 		percentageLineupQuality /= 1.05
 	}
-	log.Println("posesión equipo antes de strategia", percentageLineupQuality)
+	log.Println("team possession before strategy", percentageLineupQuality)
 
 	percentageLineupQuality = percentageLineupQuality * lineupPossessionResultOfStrategy
 
-	log.Println("posesión equipo después de strategia", percentageLineupQuality)
+	log.Println("team possession after strategy", percentageLineupQuality)
 
 	rand.Seed(time.Now().UnixNano())
 	randomFactor := 0.8 + rand.Float64()*(1.2-0.8)
-	log.Println("el randomFactor es", randomFactor)
+	log.Println("randomFactor is", randomFactor)
 	percentageLineupQualityWithRandomFactor := percentageLineupQuality * randomFactor
-	log.Println("posesión equipo después de randomFactor", percentageLineupQualityWithRandomFactor)
+	log.Println("team possession after randomFactor", percentageLineupQualityWithRandomFactor)
 
 	if percentageLineupQualityWithRandomFactor <= 45 {
 		percentageLineupQualityWithRandomFactor *= 1.22

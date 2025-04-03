@@ -20,9 +20,9 @@ func NewPostgres(c DBConfig) (*sql.DB, error) {
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", c.User, c.Pass, c.Host, c.Port, c.Database)
 	db, err := sql.Open("postgres", connString)
 	if err != nil {
-		log.Println("error en apertura de conexión")
+		log.Println("error opening connection")
 		return nil, err
 	}
-	log.Println("la conexión tiene las credenciales correctas")
+	log.Println("the connection has the correct credentials")
 	return db, db.Ping()
 }
