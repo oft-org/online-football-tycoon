@@ -47,9 +47,12 @@ type MatchEventStats struct {
 	AwayGoals        int
 }
 
-type MatchEvent struct {
-	MatchID   uuid.UUID
-	MatchInfo MatchEventStats
+type MatchEventInfo struct {
+	MatchID     uuid.UUID
+	TeamId      uuid.UUID
+	EventType   string
+	Minute      int
+	Description string
 }
 
 func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
@@ -58,7 +61,7 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 		return Result{}, fmt.Errorf("error retrieving match: %w", err)
 	}
 
-	result, matchEventStats, err := m.Play()
+	result, allEvents, err := m.Play()
 	if err != nil {
 		return Result{}, fmt.Errorf("error playing match: %w", err)
 	}
@@ -74,20 +77,30 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 		return Result{}, fmt.Errorf("error PostMatch: %w", err)
 	}
 
-	matchEvent := MatchEvent{
-		MatchID:   matchID,
-		MatchInfo: matchEventStats,
-	}
+	for _, event := range allEvents {
+		teamId, err := uuid.Parse(event.TeamId.String())
+		if err != nil {
+			log.Printf("Error parsing TeamId '%s': %v", event.TeamId, err)
+			return Result{}, fmt.Errorf("invalid team ID '%s': %w", event.TeamId, err)
+		}
 
-	err = a.repo.PostMatchEvent(matchEvent)
-	if err != nil {
-		return Result{}, err
-	}
+		matchEventInfo := MatchEventInfo{
+			MatchID:     matchID,
+			TeamId:      teamId,
+			EventType:   event.EventType,
+			Minute:      event.Minute,
+			Description: event.Event,
+		}
 
+		err = a.repo.PostMatchEvent(matchEventInfo)
+		if err != nil {
+			return Result{}, err
+		}
+	}
 	return result, nil
 }
 
-func (m Match) Play() (Result, MatchEventStats, error) {
+func (m Match) Play() (Result, []EventResult, error) {
 	lineup := m.HomeMatchStrategy.StrategyTeam.Players
 
 	rivalLineup := m.AwayMatchStrategy.StrategyTeam.Players
@@ -100,20 +113,31 @@ func (m Match) Play() (Result, MatchEventStats, error) {
 	numberOfMatchEvents, err := CalculateNumberOfMatchEvents(m.HomeMatchStrategy.GameTempo, m.AwayMatchStrategy.GameTempo)
 	if err != nil {
 		log.Println("error on numberOfMatchEvents", err)
-		return Result{}, MatchEventStats{}, err
+		return Result{}, []EventResult{}, err
 	}
 	log.Println("numberOfMatchEvents", numberOfMatchEvents)
 
 	numberOfLineupEvents, numberOfRivalEvents, err := DistributeMatchEvents(m.HomeMatchStrategy.StrategyTeam, m.AwayMatchStrategy.StrategyTeam, numberOfMatchEvents)
 	if err != nil {
 		log.Println("error al distribuir numberOfMatchEvents", err)
-		return Result{}, MatchEventStats{}, err
+		return Result{}, []EventResult{}, err
 	}
 	log.Println("numberOfLineupEvents, numberOfRivalEvents", numberOfLineupEvents, numberOfRivalEvents)
 
 	matchEventStats := GenerateEvents(homeTeam, awayTeam, numberOfLineupEvents, numberOfRivalEvents)
-	breakMatch := EventResult{Minute: 45, Event: "Descanso"}
-	endMatch := EventResult{Minute: 90, Event: "Final del Partido"}
+	breakMatch := EventResult{
+		Minute:    45,
+		EventType: "Match Break",
+		Event:     "Descanso",
+		TeamId:    homeTeam.Id,
+	}
+
+	endMatch := EventResult{
+		Minute:    90,
+		EventType: "End of the Match",
+		Event:     "Final del Partido",
+		TeamId:    homeTeam.Id,
+	}
 	allEvents := append(matchEventStats.HomeEvents, matchEventStats.AwayEvents...)
 	allEvents = append(allEvents, breakMatch, endMatch)
 	sort.Slice(allEvents, func(i, j int) bool {
@@ -139,7 +163,7 @@ func (m Match) Play() (Result, MatchEventStats, error) {
 	resultOfStrategy, err := CalculateResultOfStrategy(lineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
 	if err != nil {
 
-		return Result{}, MatchEventStats{}, fmt.Errorf("error in calculating the result of the strategy: %w", err)
+		return Result{}, []EventResult{}, fmt.Errorf("error in calculating the result of the strategy: %w", err)
 	}
 
 	totalHomePhysique = totalHomePhysique + int(resultOfStrategy["teamPhysique"])
@@ -147,13 +171,13 @@ func (m Match) Play() (Result, MatchEventStats, error) {
 	lineupTotalQuality, rivalTotalQuality, allQuality, err := CalculateTotalQuality(totalHomeTechnique, totalHomeMental, totalHomePhysique, totalAwayTechnique, totalAwayMental, totalAwayPhysique)
 	if err != nil {
 		log.Println("Error calculating total quality:", err)
-		return Result{}, MatchEventStats{}, err
+		return Result{}, []EventResult{}, err
 	}
 	log.Printf("Total Quality: player %d, rival %d, total quality %d\n", lineupTotalQuality, rivalTotalQuality, allQuality)
 	lineupPercentagePossession, rivalPercentagePossession, err := CalculateBallPossession(totalHomeTechnique, totalHomeMental, lineupTotalQuality, rivalTotalQuality, allQuality, resultOfStrategy["teamPossession"])
 	if err != nil {
 		log.Println("Error CalculateBallPossession:", err)
-		return Result{}, MatchEventStats{}, err
+		return Result{}, []EventResult{}, err
 	}
 
 	result := Result{
@@ -169,5 +193,5 @@ func (m Match) Play() (Result, MatchEventStats, error) {
 		},
 	}
 
-	return result, matchEventStats, nil
+	return result, allEvents, nil
 }

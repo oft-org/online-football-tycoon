@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/team"
 )
 
@@ -168,9 +169,11 @@ type Event struct {
 }
 
 type EventResult struct {
-	Event  string `json:"event"`
-	Minute int    `json:"minute"`
-	Team   string `json:"team"`
+	Event     string    `json:"event"`
+	Minute    int       `json:"minute"`
+	EventType string    `json:"eventtype"`
+	TeamId    uuid.UUID `json:"teamid"`
+	TeamName  string    `json:"team"`
 }
 
 func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEvents int) MatchEventStats {
@@ -347,9 +350,11 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 
 		minute := rand.Intn(90)
 		homeResults = append(homeResults, EventResult{
-			Event:  result + fmt.Sprintf(" for the team %s", home.Name),
-			Minute: minute,
-			Team:   fmt.Sprintf(" %s", home.Name),
+			Event:     result + fmt.Sprintf(" for the team %s", home.Name),
+			Minute:    minute,
+			EventType: event.Name,
+			TeamId:    home.Id,
+			TeamName:  fmt.Sprintf(" %s", home.Name),
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
@@ -370,9 +375,11 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 
 		minute := rand.Intn(90)
 		awayResults = append(awayResults, EventResult{
-			Event:  result + " para " + awayHome.Name,
-			Minute: minute,
-			Team:   awayHome.Name,
+			Event:     result + " para " + awayHome.Name,
+			Minute:    minute,
+			EventType: event.Name,
+			TeamId:    awayHome.Id,
+			TeamName:  awayHome.Name,
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
