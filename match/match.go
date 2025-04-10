@@ -127,14 +127,14 @@ func (m Match) Play() (Result, []EventResult, error) {
 	matchEventStats := GenerateEvents(homeTeam, awayTeam, numberOfLineupEvents, numberOfRivalEvents)
 	breakMatch := EventResult{
 		Minute:    45,
-		EventType: "Match Break",
+		EventType: string(EventTypeMatchBreak),
 		Event:     "Descanso",
 		TeamId:    homeTeam.Id,
 	}
 
 	endMatch := EventResult{
 		Minute:    90,
-		EventType: "End of the Match",
+		EventType: string(EventTypeEndOfTheMatch),
 		Event:     "Final del Partido",
 		TeamId:    homeTeam.Id,
 	}
