@@ -15,6 +15,9 @@ var getMatchByIdQuery string
 //go:embed sql/post_match.sql
 var postMatchQuery string
 
+//go:embed sql/post_match_events.sql
+var postMatchEventsQuery string
+
 func NewRepository(db *sql.DB) (*repository, error) {
 	getMatchesStmt, err := db.Prepare(getMatchesQuery)
 	if err != nil {
@@ -31,17 +34,24 @@ func NewRepository(db *sql.DB) (*repository, error) {
 		return nil, err
 	}
 
+	postMatchEventsStmt, err := db.Prepare(postMatchEventsQuery)
+	if err != nil {
+		return nil, err
+	}
+
 	return &repository{
-		db:           db,
-		getMatches:   getMatchesStmt,
-		getMatchById: getMatchByIdStmt,
-		postMatch:    postMatchStmt,
+		db:              db,
+		getMatches:      getMatchesStmt,
+		getMatchById:    getMatchByIdStmt,
+		postMatch:       postMatchStmt,
+		postMatchEvents: postMatchEventsStmt,
 	}, nil
 }
 
 type repository struct {
-	db           *sql.DB
-	getMatches   *sql.Stmt
-	getMatchById *sql.Stmt
-	postMatch    *sql.Stmt
+	db              *sql.DB
+	getMatches      *sql.Stmt
+	getMatchById    *sql.Stmt
+	postMatch       *sql.Stmt
+	postMatchEvents *sql.Stmt
 }

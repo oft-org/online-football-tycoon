@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	GetMatchById(matchId uuid.UUID) (*Match, error)
 	PostMatch(homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error
+	PostMatchEvent(event MatchEvent) error
 }
 
 func NewApp(repository Repository) AppService {

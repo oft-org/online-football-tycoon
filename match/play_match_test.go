@@ -23,6 +23,11 @@ func (m *MockMatchRepository) PostMatch(homeTeamId, awayTeamId uuid.UUID, matchD
 	return args.Error(0)
 }
 
+func (m *MockMatchRepository) PostMatchEvent(event MatchEvent) error {
+	args := m.Called(event)
+	return args.Error(0)
+}
+
 func TestPlayMatch(t *testing.T) {
 	matchID := uuid.New()
 
