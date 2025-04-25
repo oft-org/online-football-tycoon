@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/team"
 )
 
@@ -168,82 +169,84 @@ type Event struct {
 }
 
 type EventResult struct {
-	Event  string `json:"event"`
-	Minute int    `json:"minute"`
-	Team   string `json:"team"`
+	Event     string    `json:"event"`
+	Minute    int       `json:"minute"`
+	EventType string    `json:"eventtype"`
+	TeamId    uuid.UUID `json:"teamid"`
+	TeamName  string    `json:"team"`
 }
 
 func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEvents int) MatchEventStats {
 
 	homeEvents := []Event{
 		{
-			"Pase clave",
+			string(EventTypeKeyPass),
 			func() (string, int, int, int, int, error) {
 				return KeyPass(home, awayHome)
 			},
 		},
 		{
-			"Remate a puerta",
+			string(EventTypeShot),
 			func() (string, int, int, int, int, error) {
 				return Shot(home, awayHome, GetRandomForward(home.Players))
 			},
 		},
 		{
-			"Penalty",
+			string(EventTypePenaltyKick),
 			func() (string, int, int, int, int, error) {
 				return PenaltyKick(home, awayHome)
 			},
 		},
 		{
-			"Tiro lejano",
+			string(EventTypeLongShot),
 			func() (string, int, int, int, int, error) {
 				return LongShot(home, awayHome)
 			},
 		},
 		{
-			" Lanzamiento de Falta Indirecta",
+			string(EventTypeIndirectFreeKick),
 			func() (string, int, int, int, int, error) {
 				return IndirectFreeKick(home, awayHome)
 			},
 		},
 		{
-			"Regate",
+			string(EventTypeDribble),
 			func() (string, int, int, int, int, error) {
 				return Dribble(home, awayHome)
 			},
 		},
 		{
-			"Falta",
+			string(EventTypeFoul),
 			func() (string, int, int, int, int, error) {
 				return Foul(home, awayHome, nil)
 			},
 		},
 
 		{
-			"Gran Ocasión",
+			string(EventTypeGreatScoringChance),
 			func() (string, int, int, int, int, error) {
 				return GreatScoringChance(home)
 			},
 		},
 		{
-			"Córner",
+			string(EventTypeCornerKick),
 			func() (string, int, int, int, int, error) {
 				return CornerKick(home, awayHome)
 			},
 		},
 		{
-			"Fuera de Juego",
+			string(EventTypeOffside),
 			func() (string, int, int, int, int, error) {
 				return Offside(home, awayHome)
 			},
 		},
 		{
-			"Cabezazo",
+			string(EventTypeHeaded),
 			func() (string, int, int, int, int, error) {
 				return Headed(home, awayHome)
 			},
 		}, {
-			"Contragolpe",
+			string(EventTypeCounterAttack),
 			func() (string, int, int, int, int, error) {
 				return CounterAttack(home, awayHome)
 			},
@@ -252,72 +255,72 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 
 	awayEvents := []Event{
 		{
-			"Pase clave",
+			string(EventTypeKeyPass),
 			func() (string, int, int, int, int, error) {
 				return KeyPass(awayHome, home)
 			},
 		},
 		{
-			"Remate a puerta",
+			string(EventTypeShot),
 			func() (string, int, int, int, int, error) {
 				return Shot(awayHome, home, GetRandomForward(awayHome.Players))
 			},
 		},
 		{
-			"Penalty",
+			string(EventTypePenaltyKick),
 			func() (string, int, int, int, int, error) {
 				return PenaltyKick(awayHome, home)
 			},
 		},
 		{
-			"Tiro lejano",
+			string(EventTypeLongShot),
 			func() (string, int, int, int, int, error) {
 				return LongShot(awayHome, home)
 			},
 		},
 		{
-			" Lanzamiento de Falta Indirecta",
+			string(EventTypeIndirectFreeKick),
 			func() (string, int, int, int, int, error) {
 				return IndirectFreeKick(awayHome, home)
 			},
 		},
 		{
-			"Regate",
+			string(EventTypeDribble),
 			func() (string, int, int, int, int, error) {
 				return Dribble(awayHome, home)
 			},
 		},
 		{
-			"Falta",
+			string(EventTypeFoul),
 			func() (string, int, int, int, int, error) {
 				return Foul(awayHome, home, nil)
 			},
 		},
 		{
-			"Gran Ocasión",
+			string(EventTypeGreatScoringChance),
 			func() (string, int, int, int, int, error) {
 				return GreatScoringChance(awayHome)
 			},
 		},
 		{
-			"Córner",
+			string(EventTypeCornerKick),
 			func() (string, int, int, int, int, error) {
 				return CornerKick(awayHome, home)
 			},
 		},
 		{
-			"Fuera de Juego",
+			string(EventTypeOffside),
 			func() (string, int, int, int, int, error) {
 				return Offside(awayHome, home)
 			},
 		},
 		{
-			"Cabezazo",
+			string(EventTypeHeaded),
 			func() (string, int, int, int, int, error) {
 				return Headed(awayHome, home)
 			},
 		}, {
-			"Contragolpe",
+			string(EventTypeCounterAttack),
 			func() (string, int, int, int, int, error) {
 				return CounterAttack(awayHome, home)
 			},
@@ -347,9 +350,11 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 
 		minute := rand.Intn(90)
 		homeResults = append(homeResults, EventResult{
-			Event:  result + fmt.Sprintf(" for the team %s", home.Name),
-			Minute: minute,
-			Team:   fmt.Sprintf(" %s", home.Name),
+			Event:     result + fmt.Sprintf(" for the team %s", home.Name),
+			Minute:    minute,
+			EventType: event.Name,
+			TeamId:    home.Id,
+			TeamName:  fmt.Sprintf(" %s", home.Name),
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 
@@ -370,9 +375,11 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 
 		minute := rand.Intn(90)
 		awayResults = append(awayResults, EventResult{
-			Event:  result + " para " + awayHome.Name,
-			Minute: minute,
-			Team:   awayHome.Name,
+			Event:     result + " para " + awayHome.Name,
+			Minute:    minute,
+			EventType: event.Name,
+			TeamId:    awayHome.Id,
+			TeamName:  awayHome.Name,
 		})
 		fmt.Printf("Generated event: %s at minute %d\n", result, minute)
 

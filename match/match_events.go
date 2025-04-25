@@ -9,6 +9,30 @@ import (
 	"github.com/robertobouses/online-football-tycoon/team"
 )
 
+type EventType string
+
+const (
+	EventTypeKeyPass            EventType = "KEY_PASS"
+	EventTypeShot               EventType = "SHOT"
+	EventTypePenaltyKick        EventType = "PENALTY_KICK"
+	EventTypeLongShot           EventType = "LONG_SHOT"
+	EventTypeIndirectFreeKick   EventType = "INDIRECT_FREE_KICK"
+	EventTypeDribble            EventType = "DRIBBLE"
+	EventTypeFoul               EventType = "FOUL"
+	EventTypeYellowOrRedCard    EventType = "YELLOW_OR_RED_CARD"
+	EventTypeDirectFreeKick     EventType = "DIRECT_FREE_KICK"
+	EventTypeGreatScoringChance EventType = "GREAT_SCORING_CHANCE"
+	EventTypeCornerKick         EventType = "CORNER_KICK"
+	EventTypeInjuryDuringMatch  EventType = "INJURY_DURING_MATCH"
+	EventTypeOffside            EventType = "OFFSIDE"
+	EventTypeHeaded             EventType = "HEADED"
+	EventTypeCounterAttack      EventType = "COUNTER_ATTACK"
+	EventTypeEndOfTheMatch      EventType = "END_OF_THE_MATCH"
+	EventTypeMatchBreak         EventType = "MATCH_BREAK"
+
+	//EventTypeGoal EventType = "GOAL"
+)
+
 func CalculateSuccessIndividualEvent(skill int) int {
 	log.Printf("Evaluating success of individual event for skill level: %d", skill)
 
