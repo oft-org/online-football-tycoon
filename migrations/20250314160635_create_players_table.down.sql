@@ -1,0 +1,3 @@
+BEGIN;
+DROP TABLE IF EXISTS oft.players;
+COMMIT;

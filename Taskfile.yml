@@ -1,0 +1,16 @@
+version: '3'
+
+env:
+  DIR: "/migrations"
+  POSTGRES_URI: "postgres://postgres:mysecretpassword@localhost:5432/online_football_tycoon?sslmode=disable"
+
+tasks:
+  migration-create:
+    cmds:
+      - docker run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" migrate/migrate create -ext sql  {{.CLI_ARGS}}
+  migration-up:
+    cmds:
+      - docker run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" --network host migrate/migrate -database ${POSTGRES_URI} -source "file:///migrations" up {{.CLI_ARGS}}
+  migration-down:
+    cmds:
+      - docker run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" --network host migrate/migrate -database ${POSTGRES_URI} -source "file:///migrations" down --all {{.CLI_ARGS}}
