@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	_ "github.com/lib/pq"
 	"github.com/robertobouses/online-football-tycoon/http"
@@ -11,12 +12,19 @@ import (
 )
 
 func main() {
+
+	requiredEnv := []string{"DB_USER", "DB_PASS", "DB_HOST", "DB_PORT", "DB_NAME"}
+	for _, env := range requiredEnv {
+		if os.Getenv(env) == "" {
+			log.Fatalf("missing required environment variable: %s", env)
+		}
+	}
 	db, err := internal.NewPostgres(internal.DBConfig{
-		User:     "postgres",
-		Pass:     "mysecretpassword",
-		Host:     "localhost",
-		Port:     "5432",
-		Database: "online_football_tycoon",
+		User:     os.Getenv("DB_USER"),
+		Pass:     os.Getenv("DB_PASS"),
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		Database: os.Getenv("DB_NAME"),
 	})
 
 	if err != nil {

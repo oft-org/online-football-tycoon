@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: online_football_tycoon
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      DB_USER: postgres
+      DB_PASS: mysecretpassword
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: online_football_tycoon
+
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      - db
+    volumes:
+      - ./migrations:/migrations
+    entrypoint: [ "sh", "-c", "sleep 5 && migrate -path=/migrations -database postgres://postgres:mysecretpassword@db:5432/online_football_tycoon?sslmode=disable up" ]
+    networks:
+      - default
+
+volumes:
+  postgres_data:
