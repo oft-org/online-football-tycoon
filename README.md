@@ -3,3 +3,6 @@ Online Football Tycoon - An online football management simulator. Inspired by Ea
 
 
 This project follows the ideas of [Easy Football Tycoon](https://github.com/robertobouses/easy-football-tycoon) with new features and improvements.  
+
+
+ "// reapply fusion" 
