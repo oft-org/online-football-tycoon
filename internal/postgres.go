@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -18,11 +19,28 @@ type DBConfig struct {
 
 func NewPostgres(c DBConfig) (*sql.DB, error) {
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", c.User, c.Pass, c.Host, c.Port, c.Database)
-	db, err := sql.Open("postgres", connString)
-	if err != nil {
-		log.Println("error opening connection")
-		return nil, err
+	var db *sql.DB
+	var err error
+
+	maxRetries := 10
+
+	for i := 1; i <= maxRetries; i++ {
+		db, err = sql.Open("postgres", connString)
+		if err != nil {
+			log.Printf("attempt %d: error opening connection: %v\n", i, err)
+			time.Sleep(2 * time.Second)
+			continue
+		}
+
+		err = db.Ping()
+		if err == nil {
+			log.Println("the connection has the correct credentials")
+			return db, nil
+		}
+
+		log.Printf("attempt %d: database not ready: %v\n", i, err)
+		time.Sleep(2 * time.Second)
 	}
-	log.Println("the connection has the correct credentials")
-	return db, db.Ping()
+
+	return nil, fmt.Errorf("could not connect to database after %d attempts: %w", maxRetries, err)
 }

@@ -102,8 +102,9 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 
 func (m Match) Play() (Result, []EventResult, error) {
 	lineup := m.HomeMatchStrategy.StrategyTeam.Players
-
 	rivalLineup := m.AwayMatchStrategy.StrategyTeam.Players
+	log.Printf("StrategyTeam: %+v", m.HomeMatchStrategy.StrategyTeam)
+	log.Printf("Players: %+v", m.HomeMatchStrategy.StrategyTeam.Players)
 
 	homeTeam := m.HomeMatchStrategy.StrategyTeam
 	awayTeam := m.AwayMatchStrategy.StrategyTeam
