@@ -60,7 +60,10 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 	if err != nil {
 		return Result{}, fmt.Errorf("error retrieving match: %w", err)
 	}
-
+	if m == nil {
+		log.Printf("repo.GetMatchById returned nil for matchID: %s", matchID)
+		return Result{}, fmt.Errorf("no match found with ID: %s", matchID)
+	}
 	result, allEvents, err := m.Play()
 	if err != nil {
 		return Result{}, fmt.Errorf("error playing match: %w", err)
@@ -94,7 +97,8 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 
 		err = a.repo.PostMatchEvent(matchEventInfo)
 		if err != nil {
-			return Result{}, err
+			log.Printf("error posting event to repo: %v", err)
+			return Result{}, fmt.Errorf("PostMatchEvent failed: %w", err)
 		}
 	}
 	return result, nil
@@ -107,6 +111,7 @@ func (m Match) Play() (Result, []EventResult, error) {
 	log.Printf("Players: %+v", m.HomeMatchStrategy.StrategyTeam.Players)
 
 	homeTeam := m.HomeMatchStrategy.StrategyTeam
+
 	awayTeam := m.AwayMatchStrategy.StrategyTeam
 
 	log.Println("rivalLineup", rivalLineup)
@@ -147,16 +152,16 @@ func (m Match) Play() (Result, []EventResult, error) {
 
 	var totalHomeTechnique, totalHomeMental, totalHomePhysique int
 	for _, player := range lineup {
-		totalHomeTechnique += totalHomeTechnique + player.Technique
-		totalHomeMental += totalHomeMental + player.Mental
-		totalHomePhysique += totalHomePhysique + player.Physique
+		totalHomeTechnique += player.Technique
+		totalHomeMental += player.Mental
+		totalHomePhysique += player.Physique
 	}
 
 	var totalAwayTechnique, totalAwayMental, totalAwayPhysique int
 	for _, player := range rivalLineup {
-		totalAwayTechnique += totalAwayTechnique + player.Technique
-		totalAwayMental += totalAwayMental + player.Mental
-		totalAwayPhysique += totalAwayPhysique + player.Physique
+		totalAwayTechnique += player.Technique
+		totalAwayMental += player.Mental
+		totalAwayPhysique += player.Physique
 	}
 
 	strategy := m.HomeMatchStrategy
