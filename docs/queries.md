@@ -16,7 +16,7 @@ VALUES
     (gen_random_uuid(), (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 'Ilkay', 'Gündogan', 'Germany', 'midfielder', 34, 30000000, 950000, 90, 88, 80, 0, false, 95, 87, 92),
     (gen_random_uuid(), (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 'Raphinha', 'Dias', 'Brazil', 'forward', 28, 60000000, 900000, 88, 85, 86, 0, false, 90, 88, 93),
     (gen_random_uuid(), (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 'Robert', 'Lewandowski', 'Poland', 'forward', 36, 45000000, 1100000, 92, 90, 85, 0, false, 97, 91, 96),
-    (gen_random_uuid(), (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 'João', 'Felix', 'Portugal', 'forward', 25, 70000000, 850000, 90, 84, 82, 0, false, 89, 85, 91),
+    (gen_random_uuid(), (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 'João', 'Felix', 'Portugal', 'midfielder', 25, 70000000, 850000, 90, 84, 82, 0, false, 89, 85, 91),
     (gen_random_uuid(), (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 'Lionel', 'Messi', 'Argentina', 'forward', 36, 50000000, 1000000, 95, 90, 80, 0, false, 100, 90, 95),
     (gen_random_uuid(), (SELECT id FROM oft.teams WHERE name = 'FC Barcelona'), 'Pedri', 'Gonzalez', 'Spain', 'midfielder', 21, 70000000, 800000, 90, 85, 75, 0, false, 90, 88, 92);
 

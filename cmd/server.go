@@ -4,20 +4,25 @@ import (
 	"log"
 	"os"
 
-	"github.com/spf13/cobra"
-
 	"github.com/joho/godotenv"
 	"github.com/robertobouses/online-football-tycoon/http"
 	"github.com/robertobouses/online-football-tycoon/internal"
 	"github.com/robertobouses/online-football-tycoon/match"
 	"github.com/robertobouses/online-football-tycoon/repository"
+	"github.com/spf13/cobra"
 )
+
+var rootCmd = &cobra.Command{
+	Use:   "online-football-tycoon",
+	Short: "Football tycoon game CLI",
+}
 
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Starts the API server",
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = godotenv.Load(".env.config")
+
 		requiredEnv := []string{"DB_USER", "DB_PASS", "DB_HOST", "DB_PORT", "DB_NAME"}
 		for _, env := range requiredEnv {
 			if os.Getenv(env) == "" {
@@ -53,4 +58,10 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
+}
+
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
 }
