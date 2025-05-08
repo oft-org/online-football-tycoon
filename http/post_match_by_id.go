@@ -21,7 +21,7 @@ func (h Handler) PostMatchbyId(c *gin.Context) {
 		return
 	}
 
-	log.Printf("match id: %d", req.MatchId)
+	log.Printf("match id: %s", req.MatchId)
 
 	result, err := h.app.PlayMatch(req.MatchId)
 	if err != nil {
