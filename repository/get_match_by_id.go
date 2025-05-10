@@ -12,11 +12,10 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 	var m match.Match
 	var homeTeam, awayTeam team.Team
 	var homeStrategy, awayStrategy match.Strategy
-	var id, homeTeamId, awayTeamId uuid.UUID
+	var homeTeamId, awayTeamId uuid.UUID
 
 	row := r.getMatchTeams.QueryRow(matchId)
 	if err := row.Scan(
-		&id,
 		&homeTeamId,
 		&homeTeam.Name,
 		&awayTeamId,
@@ -27,7 +26,7 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 	homeTeam.Id = homeTeamId
 	awayTeam.Id = awayTeamId
 
-	row = r.getMatchStrategies.QueryRow(matchId)
+	row = r.getMatchStrategies.QueryRow(homeTeam.Id)
 	if err := row.Scan(
 		&homeStrategy.Formation,
 		&homeStrategy.PlayingStyle,
@@ -37,6 +36,12 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 		&homeStrategy.BuildUpPlay,
 		&homeStrategy.AttackFocus,
 		&homeStrategy.KeyPlayerUsage,
+	); err != nil {
+		return nil, err
+	}
+
+	row = r.getMatchStrategies.QueryRow(awayTeam.Id)
+	if err := row.Scan(
 		&awayStrategy.Formation,
 		&awayStrategy.PlayingStyle,
 		&awayStrategy.GameTempo,
@@ -49,7 +54,7 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 		return nil, err
 	}
 
-	rows, err := r.getMatchPlayers.Query(matchId)
+	rows, err := r.getMatchPlayers.Query(homeTeam.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -57,8 +62,8 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 
 	for rows.Next() {
 		log.Println("GetMatchById: iterando sobre fila de jugadores")
-		var homePlayer, awayPlayer team.Player
-		err := rows.Scan(
+		var homePlayer team.Player
+		if err := rows.Scan(
 			&homePlayer.PlayerId,
 			&homePlayer.FirstName,
 			&homePlayer.LastName,
@@ -66,7 +71,23 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 			&homePlayer.Technique,
 			&homePlayer.Mental,
 			&homePlayer.Physique,
+		); err != nil {
+			log.Printf("GetMatchById: error escaneando jugador: %v", err)
+			return nil, err
+		}
+		log.Printf("Jugador local: %+v", homePlayer)
+		homeTeam.Players = append(homeTeam.Players, homePlayer)
+	}
 
+	rows, err = r.getMatchPlayers.Query(awayTeam.Id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var awayPlayer team.Player
+		if err := rows.Scan(
 			&awayPlayer.PlayerId,
 			&awayPlayer.FirstName,
 			&awayPlayer.LastName,
@@ -74,14 +95,11 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 			&awayPlayer.Technique,
 			&awayPlayer.Mental,
 			&awayPlayer.Physique,
-		)
-		if err != nil {
+		); err != nil {
 			log.Printf("GetMatchById: error escaneando jugador: %v", err)
 			return nil, err
 		}
-		log.Printf("Jugador local: %+v", homePlayer)
 		log.Printf("Jugador visitante: %+v", awayPlayer)
-		homeTeam.Players = append(homeTeam.Players, homePlayer)
 		awayTeam.Players = append(awayTeam.Players, awayPlayer)
 	}
 
