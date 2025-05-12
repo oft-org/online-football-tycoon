@@ -9,8 +9,14 @@ import (
 //go:embed sql/get_matches.sql
 var getMatchesQuery string
 
-//go:embed sql/get_match_by_id.sql
-var getMatchByIdQuery string
+//go:embed sql/get_match_teams.sql
+var getMatchTeamsQuery string
+
+//go:embed sql/get_match_strategies.sql
+var getMatchStrategiesQuery string
+
+//go:embed sql/get_match_players.sql
+var getMatchPlayersQuery string
 
 //go:embed sql/post_match.sql
 var postMatchQuery string
@@ -24,7 +30,17 @@ func NewRepository(db *sql.DB) (*repository, error) {
 		return nil, err
 	}
 
-	getMatchByIdStmt, err := db.Prepare(getMatchByIdQuery)
+	getMatchTeamsStmt, err := db.Prepare(getMatchTeamsQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	getMatchStrategiesStmt, err := db.Prepare(getMatchStrategiesQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	getMatchPlayersStmt, err := db.Prepare(getMatchPlayersQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -40,18 +56,22 @@ func NewRepository(db *sql.DB) (*repository, error) {
 	}
 
 	return &repository{
-		db:              db,
-		getMatches:      getMatchesStmt,
-		getMatchById:    getMatchByIdStmt,
-		postMatch:       postMatchStmt,
-		postMatchEvents: postMatchEventsStmt,
+		db:                 db,
+		getMatches:         getMatchesStmt,
+		getMatchTeams:      getMatchTeamsStmt,
+		getMatchStrategies: getMatchStrategiesStmt,
+		getMatchPlayers:    getMatchPlayersStmt,
+		postMatch:          postMatchStmt,
+		postMatchEvents:    postMatchEventsStmt,
 	}, nil
 }
 
 type repository struct {
-	db              *sql.DB
-	getMatches      *sql.Stmt
-	getMatchById    *sql.Stmt
-	postMatch       *sql.Stmt
-	postMatchEvents *sql.Stmt
+	db                 *sql.DB
+	getMatches         *sql.Stmt
+	getMatchTeams      *sql.Stmt
+	getMatchStrategies *sql.Stmt
+	getMatchPlayers    *sql.Stmt
+	postMatch          *sql.Stmt
+	postMatchEvents    *sql.Stmt
 }

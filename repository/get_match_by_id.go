@@ -1,48 +1,66 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/match"
 	"github.com/robertobouses/online-football-tycoon/team"
 )
 
 func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
-	rows, err := r.getMatchById.Query(matchId)
+	var m match.Match
+	var homeTeam, awayTeam team.Team
+	var homeStrategy, awayStrategy match.Strategy
+
+	row := r.getMatchTeams.QueryRow(matchId)
+	if err := row.Scan(
+		&homeTeam.Id,
+		&homeTeam.Name,
+		&awayTeam.Id,
+		&awayTeam.Name,
+	); err != nil {
+		return nil, err
+	}
+
+	row = r.getMatchStrategies.QueryRow(homeTeam.Id)
+	if err := row.Scan(
+		&homeStrategy.Formation,
+		&homeStrategy.PlayingStyle,
+		&homeStrategy.GameTempo,
+		&homeStrategy.PassingStyle,
+		&homeStrategy.DefensivePositioning,
+		&homeStrategy.BuildUpPlay,
+		&homeStrategy.AttackFocus,
+		&homeStrategy.KeyPlayerUsage,
+	); err != nil {
+		return nil, err
+	}
+
+	row = r.getMatchStrategies.QueryRow(awayTeam.Id)
+	if err := row.Scan(
+		&awayStrategy.Formation,
+		&awayStrategy.PlayingStyle,
+		&awayStrategy.GameTempo,
+		&awayStrategy.PassingStyle,
+		&awayStrategy.DefensivePositioning,
+		&awayStrategy.BuildUpPlay,
+		&awayStrategy.AttackFocus,
+		&awayStrategy.KeyPlayerUsage,
+	); err != nil {
+		return nil, err
+	}
+
+	rows, err := r.getMatchPlayers.Query(homeTeam.Id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var m match.Match
-	var homeTeam, awayTeam team.Team
-	var homeStrategy, awayStrategy match.Strategy
-	var id, homeTeamId, awayTeamId uuid.UUID
-
 	for rows.Next() {
-		var homePlayer, awayPlayer team.Player
-		err := rows.Scan(
-			&id,
-			&homeTeamId,
-			&homeTeam.Name,
-			&awayTeamId,
-			&awayTeam.Name,
-			&homeStrategy.Formation,
-			&homeStrategy.PlayingStyle,
-			&homeStrategy.GameTempo,
-			&homeStrategy.PassingStyle,
-			&homeStrategy.DefensivePositioning,
-			&homeStrategy.BuildUpPlay,
-			&homeStrategy.AttackFocus,
-			&homeStrategy.KeyPlayerUsage,
-			&awayStrategy.Formation,
-			&awayStrategy.PlayingStyle,
-			&awayStrategy.GameTempo,
-			&awayStrategy.PassingStyle,
-			&awayStrategy.DefensivePositioning,
-			&awayStrategy.BuildUpPlay,
-			&awayStrategy.AttackFocus,
-			&awayStrategy.KeyPlayerUsage,
-
+		log.Println("GetMatchById: iterating over row of players")
+		var homePlayer team.Player
+		if err := rows.Scan(
 			&homePlayer.PlayerId,
 			&homePlayer.FirstName,
 			&homePlayer.LastName,
@@ -50,7 +68,23 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 			&homePlayer.Technique,
 			&homePlayer.Mental,
 			&homePlayer.Physique,
+		); err != nil {
+			log.Printf("GetMatchById: error scanning player: %v", err)
+			return nil, err
+		}
+		log.Printf("Local Player: %+v", homePlayer)
+		homeTeam.Players = append(homeTeam.Players, homePlayer)
+	}
 
+	rows, err = r.getMatchPlayers.Query(awayTeam.Id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var awayPlayer team.Player
+		if err := rows.Scan(
 			&awayPlayer.PlayerId,
 			&awayPlayer.FirstName,
 			&awayPlayer.LastName,
@@ -58,19 +92,18 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 			&awayPlayer.Technique,
 			&awayPlayer.Mental,
 			&awayPlayer.Physique,
-		)
-		if err != nil {
+		); err != nil {
+			log.Printf("GetMatchById: error scanning player: %v", err)
 			return nil, err
 		}
-
-		homeTeam.Id = homeTeamId
-		awayTeam.Id = awayTeamId
-
-		homeTeam.Players = append(homeTeam.Players, homePlayer)
+		log.Printf("Visiting Player: %+v", awayPlayer)
 		awayTeam.Players = append(awayTeam.Players, awayPlayer)
 	}
+
 	homeStrategy.StrategyTeam = homeTeam
 	awayStrategy.StrategyTeam = awayTeam
+	log.Printf("Total players on local team: %d", len(homeTeam.Players))
+	log.Printf("Total players on visiting team: %d", len(awayTeam.Players))
 
 	m.HomeMatchStrategy = homeStrategy
 	m.AwayMatchStrategy = awayStrategy
