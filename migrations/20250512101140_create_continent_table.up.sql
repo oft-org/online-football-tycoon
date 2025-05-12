@@ -1,0 +1,16 @@
+BEGIN;
+
+CREATE TABLE oft.continent (
+    code TEXT PRIMARY KEY
+);
+
+INSERT INTO oft.continent (code) VALUES
+('ASIA'),
+('AFRICA'),
+('NORTH_AMERICA'),
+('SOUTH_AMERICA'),
+('CENTRAL_AMERICA'),
+('EUROPE'),
+('OCEANIA');
+
+COMMIT;

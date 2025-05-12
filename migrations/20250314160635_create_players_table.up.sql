@@ -5,7 +5,7 @@ CREATE TABLE oft.players (
     team_id UUID REFERENCES oft.teams(id) ON DELETE CASCADE,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
-    nationality VARCHAR(255) NOT NULL,
+    nationality CHAR(3) NOT NULL REFERENCES oft.country(code),
     position VARCHAR(255) NOT NULL,
     age INT,
     fee INT,
