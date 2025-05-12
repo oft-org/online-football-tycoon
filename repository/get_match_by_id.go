@@ -58,7 +58,7 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		log.Println("GetMatchById: iterando sobre fila de jugadores")
+		log.Println("GetMatchById: iterating over row of players")
 		var homePlayer team.Player
 		if err := rows.Scan(
 			&homePlayer.PlayerId,
@@ -69,10 +69,10 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 			&homePlayer.Mental,
 			&homePlayer.Physique,
 		); err != nil {
-			log.Printf("GetMatchById: error escaneando jugador: %v", err)
+			log.Printf("GetMatchById: error scanning player: %v", err)
 			return nil, err
 		}
-		log.Printf("Jugador local: %+v", homePlayer)
+		log.Printf("Local Player: %+v", homePlayer)
 		homeTeam.Players = append(homeTeam.Players, homePlayer)
 	}
 
@@ -93,17 +93,17 @@ func (r *repository) GetMatchById(matchId uuid.UUID) (*match.Match, error) {
 			&awayPlayer.Mental,
 			&awayPlayer.Physique,
 		); err != nil {
-			log.Printf("GetMatchById: error escaneando jugador: %v", err)
+			log.Printf("GetMatchById: error scanning player: %v", err)
 			return nil, err
 		}
-		log.Printf("Jugador visitante: %+v", awayPlayer)
+		log.Printf("Visiting Player: %+v", awayPlayer)
 		awayTeam.Players = append(awayTeam.Players, awayPlayer)
 	}
 
 	homeStrategy.StrategyTeam = homeTeam
 	awayStrategy.StrategyTeam = awayTeam
-	log.Printf("Total jugadores en equipo local: %d", len(homeTeam.Players))
-	log.Printf("Total jugadores en equipo visitante: %d", len(awayTeam.Players))
+	log.Printf("Total players on local team: %d", len(homeTeam.Players))
+	log.Printf("Total players on visiting team: %d", len(awayTeam.Players))
 
 	m.HomeMatchStrategy = homeStrategy
 	m.AwayMatchStrategy = awayStrategy
