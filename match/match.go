@@ -107,15 +107,15 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 func (m Match) Play() (Result, []EventResult, error) {
 	lineup := m.HomeMatchStrategy.StrategyTeam.Players
 
-	for count, _ := range lineup {
-		log.Println(count)
+	for count, player := range lineup {
+		log.Printf("home lineup player #%d: %+v", count, player)
 	}
 	rivalLineup := m.AwayMatchStrategy.StrategyTeam.Players
-	for count, _ := range rivalLineup {
-		log.Println(count)
+	for count, player := range rivalLineup {
+		log.Printf("Away lineup player #%d: %+v", count, player)
 	}
-	log.Printf("Buggg StrategyTeam: %+v", m.HomeMatchStrategy.StrategyTeam)
-	log.Printf("Buggg Players: %+v", m.HomeMatchStrategy.StrategyTeam.Players)
+	log.Printf("Home Strategy Team details: %+v", m.HomeMatchStrategy.StrategyTeam)
+	log.Printf("Home Strategy Team Players: %+v", m.HomeMatchStrategy.StrategyTeam.Players)
 
 	homeTeam := m.HomeMatchStrategy.StrategyTeam
 
