@@ -12,12 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "online-football-tycoon",
-	Short: "Football tycoon game CLI",
-}
-
-var serverCmd = &cobra.Command{
+var ServerCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Starts the API server",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -54,14 +49,4 @@ var serverCmd = &cobra.Command{
 			log.Fatal("server failed:", err)
 		}
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(serverCmd)
-}
-
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
-	}
 }
