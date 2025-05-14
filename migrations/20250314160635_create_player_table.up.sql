@@ -1,8 +1,8 @@
 BEGIN;
 
-CREATE TABLE oft.players (
+CREATE TABLE oft.player (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    team_id UUID REFERENCES oft.teams(id) ON DELETE CASCADE,
+    team_id UUID REFERENCES oft.team(id) ON DELETE CASCADE,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
     nationality CHAR(3) NOT NULL REFERENCES oft.country(code),

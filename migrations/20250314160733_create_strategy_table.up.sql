@@ -1,8 +1,8 @@
 BEGIN;
 
-CREATE TABLE oft.strategies (
+CREATE TABLE oft.strategy (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    team_id UUID REFERENCES oft.teams(id) ON DELETE CASCADE,
+    team_id UUID REFERENCES oft.team(id) ON DELETE CASCADE,
     formation VARCHAR(255),
     playing_style VARCHAR(255),
     game_tempo VARCHAR(255),

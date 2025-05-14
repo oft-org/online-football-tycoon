@@ -19,8 +19,8 @@ SELECT
     away_strategy.attack_focus AS away_attack_focus,
     away_strategy.key_player_usage AS away_key_player_usage
 FROM oft.match m
-JOIN oft.teams ht ON m.home_team = ht.id
-JOIN oft.teams at ON m.away_team = at.id
-JOIN oft.strategies hs ON hs.team_id = m.home_team
-JOIN oft.strategies away_strategy ON away_strategy.team_id = m.away_team
+JOIN oft.team ht ON m.home_team = ht.id
+JOIN oft.team at ON m.away_team = at.id
+JOIN oft.strategy hs ON hs.team_id = m.home_team
+JOIN oft.strategy away_strategy ON away_strategy.team_id = m.away_team
 ORDER BY m.match_date ASC;
