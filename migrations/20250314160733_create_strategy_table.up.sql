@@ -1,6 +1,4 @@
-BEGIN;
-
-CREATE TABLE oft.strategy (
+CREATE TABLE IF NOT EXISTS oft.strategy (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     team_id UUID REFERENCES oft.team(id) ON DELETE CASCADE,
     formation VARCHAR(255),
@@ -13,4 +11,7 @@ CREATE TABLE oft.strategy (
     key_player_usage VARCHAR(255)
 );
 
-COMMIT;
+INSERT INTO oft.strategy (id, team_id, formation, playing_style, game_tempo, passing_style, defensive_positioning, build_up_play, attack_focus, key_player_usage)
+VALUES
+    (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'FC Barcelona'), '4-3-3', 'possession', 'fast_tempo', 'short', 'zonal_marking', 'play_from_back', 'wide_play', 'reference_player'),
+    (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), '4-2-3-1', 'direct', 'balanced_tempo', 'long', 'man_marking', 'counter_attack', 'central_play', 'playmaker');
