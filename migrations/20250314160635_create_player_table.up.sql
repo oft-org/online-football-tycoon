@@ -1,10 +1,24 @@
-INSERT INTO oft.team (id, name, country) VALUES
-    (gen_random_uuid(), 'FC Barcelona', 'ESP'),
-    (gen_random_uuid(), 'Manchester City', 'GBR');
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-
-  
-
+CREATE TABLE IF NOT EXISTS oft.player (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    team_id UUID REFERENCES oft.team(id) ON DELETE CASCADE,
+    firstname VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
+    nationality CHAR(3) NOT NULL REFERENCES oft.country(code),
+    position VARCHAR(255) NOT NULL,
+    age INT,
+    fee INT,
+    salary INT,
+    technique INT,
+    mental INT,
+    physique INT,
+    injurydays INT DEFAULT 0,
+    lined BOOLEAN DEFAULT false,
+    familiarity INT,
+    fitness INT,
+    happiness INT
+);
 
 INSERT INTO oft.player (id, team_id, firstname, lastname, nationality, position, age, fee, salary, technique, mental, physique, injurydays, lined, familiarity, fitness, happiness)
 VALUES
@@ -20,16 +34,8 @@ VALUES
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'FC Barcelona'), 'Lionel', 'Messi', 'ARG', 'forward', 36, 50000000, 1000000, 95, 90, 80, 0, false, 100, 90, 95),
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'FC Barcelona'), 'Pedri', 'Gonzalez', 'ESP', 'midfielder', 21, 70000000, 800000, 90, 85, 75, 0, false, 90, 88, 92);
 
-
-
-
-
-
-
 INSERT INTO oft.player (
-    id, team_id, firstname, lastname, nationality, position, age, fee, salary,
-    technique, mental, physique, injurydays, lined, familiarity, fitness, happiness
-)
+    id, team_id, firstname, lastname, nationality, position, age, fee, salary, technique, mental, physique, injurydays, lined, familiarity, fitness, happiness)
 VALUES
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Ederson', 'Moraes', 'BRA', 'goalkeeper', 31, 40000000, 800000, 84, 87, 85, 0, false, 95, 91, 93),
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Kyle', 'Walker', 'GBR', 'defender', 34, 50000000, 850000, 80, 85, 92, 0, false, 90, 92, 94),
@@ -42,25 +48,3 @@ VALUES
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Phil', 'Foden', 'GBR', 'forward', 25, 95000000, 1100000, 92, 87, 85, 0, false, 96, 93, 97),
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Erling', 'Haaland', 'NOR', 'forward', 24, 150000000, 1200000, 88, 85, 95, 0, false, 95, 92, 96),
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Kevin', 'De Bruyne', 'BEL', 'midfielder', 33, 80000000, 1100000, 93, 90, 85, 0, false, 100, 90, 94);
-
-
-
-
-
-
-INSERT INTO oft.strategy (id, team_id, formation, playing_style, game_tempo, passing_style, defensive_positioning, build_up_play, attack_focus, key_player_usage)
-VALUES
-    (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'FC Barcelona'), '4-3-3', 'possession', 'fast_tempo', 'short', 'zonal_marking', 'play_from_back', 'wide_play', 'reference_player'),
-    (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), '4-2-3-1', 'direct', 'balanced_tempo', 'long', 'man_marking', 'counter_attack', 'central_play', 'playmaker');
-
-
-
-
-
-
-INSERT INTO oft.match (id, home_team, away_team, match_date, home_result, away_result)
-VALUES
-    (gen_random_uuid(), 
-     (SELECT id FROM oft.team WHERE name = 'FC Barcelona'), 
-     (SELECT id FROM oft.team WHERE name = 'Manchester City'),
-     '2025-03-15 20:00:00', 2, 2);

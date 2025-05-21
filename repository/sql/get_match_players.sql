@@ -6,5 +6,5 @@ SELECT
     technique,
     mental,
     physique
-FROM oft.players
+FROM oft.player
 WHERE team_id = $1;

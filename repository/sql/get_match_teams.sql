@@ -4,6 +4,6 @@ SELECT
     at.id AS away_team_id,
     at.name AS away_team_name
 FROM oft.match m
-JOIN oft.teams ht ON m.home_team = ht.id
-JOIN oft.teams at ON m.away_team = at.id
+JOIN oft.team ht ON m.home_team = ht.id
+JOIN oft.team at ON m.away_team = at.id
 WHERE m.id = $1;

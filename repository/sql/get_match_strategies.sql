@@ -7,5 +7,5 @@ SELECT
     build_up_play,
     attack_focus,
     key_player_usage
-FROM oft.strategies
+FROM oft.strategy
 WHERE team_id = $1;
