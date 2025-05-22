@@ -81,7 +81,6 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 	}
 
 	for _, event := range allEvents {
-		teamId, err := uuid.Parse(event.TeamId.String())
 		if err != nil {
 			log.Printf("Error parsing TeamId '%s': %v", event.TeamId, err)
 			return Result{}, fmt.Errorf("invalid team ID '%s': %w", event.TeamId, err)
@@ -89,7 +88,7 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 
 		matchEventInfo := MatchEventInfo{
 			MatchID:     matchID,
-			TeamId:      teamId,
+			TeamId:      event.TeamId,
 			EventType:   event.EventType,
 			Minute:      event.Minute,
 			Description: event.Event,
@@ -105,13 +104,13 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (Result, error) {
 }
 
 func (m Match) Play() (Result, []EventResult, error) {
-	lineup := m.HomeMatchStrategy.StrategyTeam.Players
+	homeLineup := m.HomeMatchStrategy.StrategyTeam.Players
 
-	for count, player := range lineup {
+	for count, player := range homeLineup {
 		log.Printf("home lineup player #%d: %+v", count, player)
 	}
-	rivalLineup := m.AwayMatchStrategy.StrategyTeam.Players
-	for count, player := range rivalLineup {
+	awayLineup := m.AwayMatchStrategy.StrategyTeam.Players
+	for count, player := range awayLineup {
 		log.Printf("Away lineup player #%d: %+v", count, player)
 	}
 	log.Printf("Home Strategy Team details: %+v", m.HomeMatchStrategy.StrategyTeam)
@@ -121,7 +120,7 @@ func (m Match) Play() (Result, []EventResult, error) {
 
 	awayTeam := m.AwayMatchStrategy.StrategyTeam
 
-	log.Println("rivalLineup", rivalLineup)
+	log.Printf("Rival Lineup (Team %s): %+v", awayTeam.Id, awayLineup)
 
 	numberOfMatchEvents, err := CalculateNumberOfMatchEvents(m.HomeMatchStrategy.GameTempo, m.AwayMatchStrategy.GameTempo)
 	if err != nil {
@@ -157,23 +156,12 @@ func (m Match) Play() (Result, []EventResult, error) {
 		return allEvents[i].Minute < allEvents[j].Minute
 	})
 
-	var totalHomeTechnique, totalHomeMental, totalHomePhysique int
-	for _, player := range lineup {
-		totalHomeTechnique += player.Technique
-		totalHomeMental += player.Mental
-		totalHomePhysique += player.Physique
-	}
-
-	var totalAwayTechnique, totalAwayMental, totalAwayPhysique int
-	for _, player := range rivalLineup {
-		totalAwayTechnique += player.Technique
-		totalAwayMental += player.Mental
-		totalAwayPhysique += player.Physique
-	}
+	totalHomeTechnique, totalHomeMental, totalHomePhysique := totalStats(homeLineup)
+	totalAwayTechnique, totalAwayMental, totalAwayPhysique := totalStats(awayLineup)
 
 	strategy := m.HomeMatchStrategy
 
-	resultOfStrategy, err := CalculateResultOfStrategy(lineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
+	resultOfStrategy, err := CalculateResultOfStrategy(homeLineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
 	if err != nil {
 
 		return Result{}, []EventResult{}, fmt.Errorf("error in calculating the result of the strategy: %w", err)
@@ -207,4 +195,13 @@ func (m Match) Play() (Result, []EventResult, error) {
 	}
 
 	return result, allEvents, nil
+}
+
+func totalStats(players []team.Player) (technique, mental, physique int) {
+	for _, p := range players {
+		technique += p.Technique
+		mental += p.Mental
+		physique += p.Physique
+	}
+	return
 }
