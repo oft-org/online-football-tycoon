@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TABLE IF NOT EXISTS oft.match (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     home_team uuid REFERENCES oft.team(id) ON DELETE CASCADE,
@@ -13,3 +15,5 @@ VALUES
      (SELECT id FROM oft.team WHERE name = 'FC Barcelona'), 
      (SELECT id FROM oft.team WHERE name = 'Manchester City'),
      '2025-03-15 20:00:00', 2, 2);
+
+COMMIT;

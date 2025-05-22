@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS oft.team (
@@ -9,3 +11,5 @@ CREATE TABLE IF NOT EXISTS oft.team (
 INSERT INTO oft.team (id, name, country) VALUES
     (gen_random_uuid(), 'FC Barcelona', 'ESP'),
     (gen_random_uuid(), 'Manchester City', 'GBR');
+
+COMMIT;

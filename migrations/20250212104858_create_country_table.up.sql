@@ -1,4 +1,5 @@
 BEGIN;
+
 CREATE TABLE IF NOT EXISTS oft.country (
     code CHAR(3) PRIMARY KEY,
     continent TEXT NOT NULL,
@@ -199,7 +200,6 @@ INSERT INTO oft.country (code, continent) VALUES
 ('VNM', 'ASIA'),
 ('YEM', 'ASIA'),
 ('ZMB', 'AFRICA'),
-('ZWE', 'AFRICA')
-ON CONFLICT DO NOTHING;
+('ZWE', 'AFRICA');
 
 COMMIT;

@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS oft.player (
@@ -48,3 +50,5 @@ VALUES
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Phil', 'Foden', 'GBR', 'forward', 25, 95000000, 1100000, 92, 87, 85, 0, false, 96, 93, 97),
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Erling', 'Haaland', 'NOR', 'forward', 24, 150000000, 1200000, 88, 85, 95, 0, false, 95, 92, 96),
     (gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Manchester City'), 'Kevin', 'De Bruyne', 'BEL', 'midfielder', 33, 80000000, 1100000, 93, 90, 85, 0, false, 100, 90, 94);
+
+COMMIT;

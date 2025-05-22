@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TABLE IF NOT EXISTS oft.continent (
     code TEXT PRIMARY KEY
 );
@@ -9,5 +11,6 @@ INSERT INTO oft.continent (code) VALUES
 ('SOUTH_AMERICA'),
 ('CENTRAL_AMERICA'),
 ('EUROPE'),
-('OCEANIA')
-ON CONFLICT DO NOTHING;
+('OCEANIA');
+
+COMMIT;
