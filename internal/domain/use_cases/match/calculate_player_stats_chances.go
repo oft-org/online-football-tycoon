@@ -5,8 +5,9 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
+
 	"github.com/google/uuid"
-	"github.com/robertobouses/online-football-tycoon/team"
 )
 
 const (
@@ -16,7 +17,7 @@ const (
 	fitnessWeight     = 0.2
 )
 
-func DistributeChancesByStrategy(strategy Strategy, teamChances int) (int, int, int) {
+func DistributeChancesByStrategy(strategy domain.Strategy, teamChances int) (int, int, int) {
 	var forwardChances, midfieldChances, defenderChances int
 	switch strategy.PassingStyle {
 	case "possession":
@@ -39,7 +40,7 @@ func DistributeChancesByStrategy(strategy Strategy, teamChances int) (int, int, 
 	return forwardChances, midfieldChances, defenderChances
 }
 
-func ModifyChancesForBuildUpPlay(strategy Strategy, forwardChances, midfieldChances, defenderChances int) (int, int, int) {
+func ModifyChancesForBuildUpPlay(strategy domain.Strategy, forwardChances, midfieldChances, defenderChances int) (int, int, int) {
 	switch strategy.BuildUpPlay {
 	case "play_from_back":
 		midfieldChances += int(0.1 * float64(midfieldChances))
@@ -52,7 +53,7 @@ func ModifyChancesForBuildUpPlay(strategy Strategy, forwardChances, midfieldChan
 	return forwardChances, midfieldChances, defenderChances
 }
 
-func DistributeChancesToPlayers(lineup []team.Player, forwardChances, midfieldChances, defenderChances, totalChances int) map[uuid.UUID]int {
+func DistributeChancesToPlayers(lineup []domain.Player, forwardChances, midfieldChances, defenderChances, totalChances int) map[uuid.UUID]int {
 	chancesByPlayer := make(map[uuid.UUID]int)
 
 	forwards := filterPlayersByPosition(lineup, "forward")
@@ -77,7 +78,7 @@ func DistributeChancesToPlayers(lineup []team.Player, forwardChances, midfieldCh
 	return chancesByPlayer
 }
 
-func DistributeChances(players []team.Player, totalChances int) map[uuid.UUID]int {
+func DistributeChances(players []domain.Player, totalChances int) map[uuid.UUID]int {
 	chancesByPlayer := make(map[uuid.UUID]int)
 	if len(players) == 0 {
 		return chancesByPlayer
@@ -106,8 +107,8 @@ func DistributeChances(players []team.Player, totalChances int) map[uuid.UUID]in
 	return chancesByPlayer
 }
 
-func filterPlayersByPosition(lineup []team.Player, position string) []team.Player {
-	var playersInPosition []team.Player
+func filterPlayersByPosition(lineup []domain.Player, position string) []domain.Player {
+	var playersInPosition []domain.Player
 	for _, player := range lineup {
 		if player.Position == position {
 			playersInPosition = append(playersInPosition, player)
@@ -115,7 +116,7 @@ func filterPlayersByPosition(lineup []team.Player, position string) []team.Playe
 	}
 	return playersInPosition
 }
-func calculatePlayerWeight(lineupPlayer team.Player) float64 {
+func calculatePlayerWeight(lineupPlayer domain.Player) float64 {
 
 	technique := float64(lineupPlayer.Technique)
 	happiness := float64(lineupPlayer.Happiness)

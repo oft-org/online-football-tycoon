@@ -7,14 +7,15 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/handler"
 )
 
 type Server struct {
-	match  Handler
+	match  handler.Handler
 	engine *gin.Engine
 }
 
-func NewServer(match Handler) Server {
+func NewServer(match handler.Handler) Server {
 	return Server{
 		match:  match,
 		engine: gin.Default(),

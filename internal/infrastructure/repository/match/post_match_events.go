@@ -1,12 +1,12 @@
-package repository
+package match
 
 import (
 	"log"
 
-	"github.com/robertobouses/online-football-tycoon/match"
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func (r *repository) PostMatchEvent(matchEventInfo match.MatchEventInfo) error {
+func (r *Repository) PostMatchEvent(matchEventInfo domain.MatchEventInfo) error {
 
 	_, err := r.postMatchEvents.Exec(
 		matchEventInfo.MatchID,

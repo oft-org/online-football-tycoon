@@ -1,23 +1,22 @@
-package repository
+package match
 
 import (
 	"github.com/google/uuid"
-	"github.com/robertobouses/online-football-tycoon/match"
-	"github.com/robertobouses/online-football-tycoon/team"
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func (r *repository) GetMatches() ([]match.Match, error) {
+func (r *Repository) GetMatches() ([]domain.Match, error) {
 	rows, err := r.getMatches.Query()
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var matches []match.Match
+	var matches []domain.Match
 	for rows.Next() {
-		var m match.Match
-		var homeTeam, awayTeam team.Team
-		var homeStrategy, awayStrategy match.Strategy
+		var m domain.Match
+		var homeTeam, awayTeam domain.Team
+		var homeStrategy, awayStrategy domain.Strategy
 		var matchId uuid.UUID
 
 		err := rows.Scan(

@@ -1,15 +1,15 @@
-package http
+package handler
 
 import (
 	"github.com/google/uuid"
-	"github.com/robertobouses/online-football-tycoon/match"
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
 type App interface {
-	PlayMatch(matchID uuid.UUID) (match.Result, error)
+	PlayMatch(matchID uuid.UUID) (domain.Result, error)
 }
 
-func NewHandler(app match.AppService) Handler {
+func NewHandler(app App) Handler {
 	return Handler{
 		app: app,
 	}

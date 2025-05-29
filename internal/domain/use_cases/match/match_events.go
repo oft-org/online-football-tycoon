@@ -6,7 +6,7 @@ import (
 	"log"
 	"math/rand"
 
-	"github.com/robertobouses/online-football-tycoon/team"
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
 type EventType string
@@ -107,7 +107,7 @@ func CalculateSuccessConfrontation(atackerSkill, defenderSkill int) int {
 	}
 }
 
-func KeyPass(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
+func KeyPass(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
 
 	passer := GetRandomMidfielder(lineup.Players)
 	receiver := GetRandomForward(lineup.Players)
@@ -143,7 +143,7 @@ func KeyPass(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 	return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 }
 
-func Shot(lineup, rivalLineup team.Team, passer *team.Player) (string, int, int, int, int, error) {
+func Shot(lineup, rivalLineup domain.Team, passer *domain.Player) (string, int, int, int, int, error) {
 
 	shooter := GetRandomForward(lineup.Players)
 	if shooter == nil {
@@ -204,7 +204,7 @@ func Shot(lineup, rivalLineup team.Team, passer *team.Player) (string, int, int,
 	return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 }
 
-func PenaltyKick(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
+func PenaltyKick(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
 	shooter := GetRandomForward(lineup.Players)
 	if shooter == nil {
 		return "no forward player found in lineup", 0, 0, 0, 0, errors.New("no forward player found in lineup")
@@ -240,7 +240,7 @@ func PenaltyKick(lineup, rivalLineup team.Team) (string, int, int, int, int, err
 	}
 }
 
-func LongShot(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
+func LongShot(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
 
 	shooter := GetRandomForward(lineup.Players)
 	if shooter == nil {
@@ -278,7 +278,7 @@ func LongShot(lineup, rivalLineup team.Team) (string, int, int, int, int, error)
 	}
 }
 
-func IndirectFreeKick(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
+func IndirectFreeKick(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
 
 	shooter := GetRandomMidfielder(lineup.Players)
 	if shooter == nil {
@@ -328,8 +328,8 @@ func IndirectFreeKick(lineup, rivalLineup team.Team) (string, int, int, int, int
 	}
 }
 
-func Dribble(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
-	var dribbler, defender *team.Player
+func Dribble(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
+	var dribbler, defender *domain.Player
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
@@ -392,7 +392,7 @@ func Dribble(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 	return sentence, lineupChances, rivalChances, lineupGoals, rivalGoals, nil
 }
 
-func Foul(lineup, rivalLineup team.Team, defender *team.Player) (string, int, int, int, int, error) {
+func Foul(lineup, rivalLineup domain.Team, defender *domain.Player) (string, int, int, int, int, error) {
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
@@ -420,7 +420,7 @@ func Foul(lineup, rivalLineup team.Team, defender *team.Player) (string, int, in
 
 }
 
-func YellowOrRedCard(lineup team.Team, defender *team.Player) (string, int, int, int, int, error) {
+func YellowOrRedCard(lineup domain.Team, defender *domain.Player) (string, int, int, int, int, error) {
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals, probabilyYellowCard int
 	sentence = "The referee puts his hand in his pocket"
@@ -454,7 +454,7 @@ func YellowOrRedCard(lineup team.Team, defender *team.Player) (string, int, int,
 
 }
 
-func DirectFreeKick(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
+func DirectFreeKick(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
 
 	shooter := GetRandomForward(lineup.Players)
 	if shooter == nil {
@@ -492,8 +492,8 @@ func DirectFreeKick(lineup, rivalLineup team.Team) (string, int, int, int, int, 
 	}
 }
 
-func GreatScoringChance(lineup team.Team) (string, int, int, int, int, error) {
-	var shooter *team.Player
+func GreatScoringChance(lineup domain.Team) (string, int, int, int, int, error) {
+	var shooter *domain.Player
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 	prob := ProbabilisticIncrement66()
@@ -523,9 +523,9 @@ func GreatScoringChance(lineup team.Team) (string, int, int, int, int, error) {
 	}
 }
 
-func CornerKick(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
-	var centerer *team.Player
-	var attacker, defender *team.Player
+func CornerKick(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
+	var centerer *domain.Player
+	var attacker, defender *domain.Player
 	var sentence string
 	var lineupChances, rivalChances, lineupGoals, rivalGoals int
 
@@ -564,8 +564,8 @@ func CornerKick(lineup, rivalLineup team.Team) (string, int, int, int, int, erro
 	}
 }
 
-func InjuryDuringMatch(lineup team.Team) (string, int, int, int, int, error) {
-	var injuredPlayer *team.Player
+func InjuryDuringMatch(lineup domain.Team) (string, int, int, int, int, error) {
+	var injuredPlayer *domain.Player
 	var sentence string
 	injuredPlayer = GetRandomPlayerExcludingGoalkeeper(lineup.Players)
 	if injuredPlayer == nil {
@@ -576,8 +576,8 @@ func InjuryDuringMatch(lineup team.Team) (string, int, int, int, int, error) {
 	return sentence, 0, 0, 0, 0, nil
 }
 
-func Offside(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
-	var passer, playerOffside *team.Player
+func Offside(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
+	var passer, playerOffside *domain.Player
 	var lineupChances int
 	var sentence string
 
@@ -609,8 +609,8 @@ func Offside(lineup, rivalLineup team.Team) (string, int, int, int, int, error) 
 	return sentence, lineupChances, 0, 0, 0, nil
 }
 
-func Headed(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
-	var header, rivalHeader *team.Player
+func Headed(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
+	var header, rivalHeader *domain.Player
 	var sentence string
 	var lineupChances, rivalChances int
 
@@ -646,7 +646,7 @@ func Headed(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
 	return sentence, lineupChances, rivalChances, 0, 0, nil
 }
 
-func CounterAttack(lineup, rivalLineup team.Team) (string, int, int, int, int, error) {
+func CounterAttack(lineup, rivalLineup domain.Team) (string, int, int, int, int, error) {
 	var sentence string
 
 	sentence = "Some players run out in counterattack"

@@ -7,8 +7,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/robertobouses/online-football-tycoon/team"
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
 func CalculateNumberOfMatchEvents(homeGameTempo, awayGameTempo string) (int, error) {
@@ -41,7 +40,7 @@ func CalculateNumberOfMatchEvents(homeGameTempo, awayGameTempo string) (int, err
 	return numberOfMatchEvents, nil
 }
 
-func DistributeMatchEvents(home, awayHome team.Team, numberOfMatchEvents int) (int, int, error) {
+func DistributeMatchEvents(home, awayHome domain.Team, numberOfMatchEvents int) (int, int, error) {
 	log.Println("home en DistributeMatchEvents", home)
 	log.Println("away en DistributeMatchEvents", awayHome)
 	homeTotalQuality, err := CalculateQuality(home)
@@ -78,7 +77,7 @@ func DistributeMatchEvents(home, awayHome team.Team, numberOfMatchEvents int) (i
 	return homeEvents, awayEvents, nil
 }
 
-func CalculateQuality(home team.Team) (int, error) {
+func CalculateQuality(home domain.Team) (int, error) {
 	var totalTechnique, totalMental, totalPhysique int
 	for _, player := range home.Players {
 		totalTechnique += player.Technique
@@ -98,8 +97,8 @@ func clamp(value int, min int, max int) int {
 	return value
 }
 
-func GetRandomDefender(home []team.Player) *team.Player {
-	var defenders []team.Player
+func GetRandomDefender(home []domain.Player) *domain.Player {
+	var defenders []domain.Player
 	for _, player := range home {
 		if player.Position == "defender" {
 			defenders = append(defenders, player)
@@ -109,8 +108,8 @@ func GetRandomDefender(home []team.Player) *team.Player {
 	return GetRandomPlayer(defenders)
 }
 
-func GetRandomMidfielder(home []team.Player) *team.Player {
-	var midfielders []team.Player
+func GetRandomMidfielder(home []domain.Player) *domain.Player {
+	var midfielders []domain.Player
 	for _, player := range home {
 		if player.Position == "midfielder" {
 			midfielders = append(midfielders, player)
@@ -120,8 +119,8 @@ func GetRandomMidfielder(home []team.Player) *team.Player {
 	return GetRandomPlayer(midfielders)
 }
 
-func GetRandomForward(home []team.Player) *team.Player {
-	var forwards []team.Player
+func GetRandomForward(home []domain.Player) *domain.Player {
+	var forwards []domain.Player
 	for _, player := range home {
 		if player.Position == "forward" {
 			forwards = append(forwards, player)
@@ -131,8 +130,8 @@ func GetRandomForward(home []team.Player) *team.Player {
 	return GetRandomPlayer(forwards)
 }
 
-func GetGoalkeeper(home []team.Player) *team.Player {
-	var goalkeepers []team.Player
+func GetGoalkeeper(home []domain.Player) *domain.Player {
+	var goalkeepers []domain.Player
 	for _, player := range home {
 		if player.Position == "goalkeeper" {
 			goalkeepers = append(goalkeepers, player)
@@ -142,8 +141,8 @@ func GetGoalkeeper(home []team.Player) *team.Player {
 	return GetRandomPlayer(goalkeepers)
 }
 
-func GetRandomPlayerExcludingGoalkeeper(home []team.Player) *team.Player {
-	var playersExcludingGoalkeepers []team.Player
+func GetRandomPlayerExcludingGoalkeeper(home []domain.Player) *domain.Player {
+	var playersExcludingGoalkeepers []domain.Player
 	for _, player := range home {
 		if player.Position != "goalkeeper" {
 			playersExcludingGoalkeepers = append(playersExcludingGoalkeepers, player)
@@ -153,7 +152,7 @@ func GetRandomPlayerExcludingGoalkeeper(home []team.Player) *team.Player {
 	return GetRandomPlayer(playersExcludingGoalkeepers)
 }
 
-func GetRandomPlayer(filteredPlayers []team.Player) *team.Player {
+func GetRandomPlayer(filteredPlayers []domain.Player) *domain.Player {
 	if len(filteredPlayers) == 0 {
 		return nil
 	}
@@ -163,22 +162,9 @@ func GetRandomPlayer(filteredPlayers []team.Player) *team.Player {
 	return &randomPlayer
 }
 
-type Event struct {
-	Name    string
-	Execute func() (string, int, int, int, int, error)
-}
+func GenerateEvents(home, awayHome domain.Team, numberOfHomeEvents, numberOfAwayEvents int) domain.MatchEventStats {
 
-type EventResult struct {
-	Event     string    `json:"event"`
-	Minute    int       `json:"minute"`
-	EventType string    `json:"eventtype"`
-	TeamId    uuid.UUID `json:"teamid"`
-	TeamName  string    `json:"team"`
-}
-
-func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEvents int) MatchEventStats {
-
-	homeEvents := []Event{
+	homeEvents := []domain.Event{
 		{
 			string(EventTypeKeyPass),
 			func() (string, int, int, int, int, error) {
@@ -253,7 +239,7 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 		},
 	}
 
-	awayEvents := []Event{
+	awayEvents := []domain.Event{
 		{
 			string(EventTypeKeyPass),
 			func() (string, int, int, int, int, error) {
@@ -326,8 +312,8 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 			},
 		},
 	}
-	var homeResults []EventResult
-	var awayResults []EventResult
+	var homeResults []domain.EventResult
+	var awayResults []domain.EventResult
 	var homeChances, awayChances, homeGoals, awayGoals int
 
 	for i := 0; i < numberOfHomeEvents; i++ {
@@ -349,7 +335,7 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 		awayGoals += newAwayGoals
 
 		minute := rand.Intn(90)
-		homeResults = append(homeResults, EventResult{
+		homeResults = append(homeResults, domain.EventResult{
 			Event:     result + fmt.Sprintf(" for the team %s", home.Name),
 			Minute:    minute,
 			EventType: event.Name,
@@ -374,7 +360,7 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 		awayGoals += newAwayGoals
 
 		minute := rand.Intn(90)
-		awayResults = append(awayResults, EventResult{
+		awayResults = append(awayResults, domain.EventResult{
 			Event:     result + " para " + awayHome.Name,
 			Minute:    minute,
 			EventType: event.Name,
@@ -385,7 +371,7 @@ func GenerateEvents(home, awayHome team.Team, numberOfHomeEvents, numberOfAwayEv
 
 	}
 
-	return MatchEventStats{
+	return domain.MatchEventStats{
 		HomeEvents:       homeResults,
 		AwayEvents:       awayResults,
 		HomeScoreChances: homeChances,

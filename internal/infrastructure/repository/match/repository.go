@@ -1,4 +1,4 @@
-package repository
+package match
 
 import (
 	"database/sql"
@@ -24,7 +24,7 @@ var postMatchQuery string
 //go:embed sql/post_match_events.sql
 var postMatchEventsQuery string
 
-func NewRepository(db *sql.DB) (*repository, error) {
+func NewRepository(db *sql.DB) (*Repository, error) {
 	getMatchesStmt, err := db.Prepare(getMatchesQuery)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func NewRepository(db *sql.DB) (*repository, error) {
 		return nil, err
 	}
 
-	return &repository{
+	return &Repository{
 		db:                 db,
 		getMatches:         getMatchesStmt,
 		getMatchTeams:      getMatchTeamsStmt,
@@ -66,7 +66,7 @@ func NewRepository(db *sql.DB) (*repository, error) {
 	}, nil
 }
 
-type repository struct {
+type Repository struct {
 	db                 *sql.DB
 	getMatches         *sql.Stmt
 	getMatchTeams      *sql.Stmt

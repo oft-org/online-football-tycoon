@@ -1,11 +1,12 @@
-package match
+package match_test
 
 import (
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/robertobouses/online-football-tycoon/team"
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
+	"github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/match"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -14,10 +15,10 @@ type MockMatchRepository struct {
 	mock.Mock
 }
 
-func (m *MockMatchRepository) GetMatchById(matchID uuid.UUID) (*Match, error) {
+func (m *MockMatchRepository) GetMatchById(matchID uuid.UUID) (*domain.Match, error) {
 	args := m.Called(matchID)
 
-	match, ok := args.Get(0).(*Match)
+	match, ok := args.Get(0).(*domain.Match)
 	if !ok && args.Get(0) != nil {
 		panic("expected *Match from mock but got something else")
 	}
@@ -29,7 +30,7 @@ func (m *MockMatchRepository) PostMatch(homeTeamId, awayTeamId uuid.UUID, matchD
 	return args.Error(0)
 }
 
-func (m *MockMatchRepository) PostMatchEvent(event MatchEventInfo) error {
+func (m *MockMatchRepository) PostMatchEvent(event domain.MatchEventInfo) error {
 	args := m.Called(event)
 	return args.Error(0)
 }
@@ -39,7 +40,7 @@ func TestPlayMatch(t *testing.T) {
 
 	mockRepo := new(MockMatchRepository)
 
-	homePlayers := []team.Player{
+	homePlayers := []domain.Player{
 		{PlayerId: uuid.New(), FirstName: "Marc-André", LastName: "ter Stegen", Nationality: "DEU", Position: "goalkeeper", Age: 31, Fee: 50000000, Salary: 10000000, Technique: 85, Mental: 88, Physique: 80, InjuryDays: 0, Lined: true, Familiarity: 90, Fitness: 95, Happiness: 90},
 		{PlayerId: uuid.New(), FirstName: "Jules", LastName: "Koundé", Nationality: "FRA", Position: "defender", Age: 25, Fee: 60000000, Salary: 9000000, Technique: 78, Mental: 85, Physique: 88, InjuryDays: 0, Lined: true, Familiarity: 85, Fitness: 92, Happiness: 87},
 		{PlayerId: uuid.New(), FirstName: "Ronald", LastName: "Araújo", Nationality: "URY", Position: "defender", Age: 24, Fee: 70000000, Salary: 9500000, Technique: 80, Mental: 87, Physique: 90, InjuryDays: 0, Lined: true, Familiarity: 88, Fitness: 94, Happiness: 88},
@@ -53,7 +54,7 @@ func TestPlayMatch(t *testing.T) {
 		{PlayerId: uuid.New(), FirstName: "João", LastName: "Félix", Nationality: "PRT", Position: "forward", Age: 24, Fee: 70000000, Salary: 9500000, Technique: 88, Mental: 83, Physique: 82, InjuryDays: 0, Lined: true, Familiarity: 87, Fitness: 92, Happiness: 86},
 	}
 
-	awayPlayers := []team.Player{
+	awayPlayers := []domain.Player{
 		{PlayerId: uuid.New(), FirstName: "Ederson", LastName: "Moraes", Nationality: "BRA", Position: "goalkeeper", Age: 31, Fee: 60000000, Salary: 11000000, Technique: 86, Mental: 89, Physique: 85, InjuryDays: 0, Lined: true, Familiarity: 91, Fitness: 95, Happiness: 90},
 		{PlayerId: uuid.New(), FirstName: "Kyle", LastName: "Walker", Nationality: "GBR", Position: "defender", Age: 34, Fee: 40000000, Salary: 9000000, Technique: 80, Mental: 87, Physique: 90, InjuryDays: 0, Lined: true, Familiarity: 85, Fitness: 93, Happiness: 87},
 		{PlayerId: uuid.New(), FirstName: "Ruben", LastName: "Dias", Nationality: "PRT", Position: "defender", Age: 26, Fee: 80000000, Salary: 10000000, Technique: 82, Mental: 89, Physique: 92, InjuryDays: 0, Lined: true, Familiarity: 88, Fitness: 94, Happiness: 88},
@@ -66,10 +67,10 @@ func TestPlayMatch(t *testing.T) {
 		{PlayerId: uuid.New(), FirstName: "Erling", LastName: "Haaland", Nationality: "NOR", Position: "forward", Age: 24, Fee: 180000000, Salary: 15000000, Technique: 92, Mental: 90, Physique: 95, InjuryDays: 0, Lined: true, Familiarity: 90, Fitness: 90, Happiness: 90},
 	}
 
-	homeTeam := team.Team{Name: "FC Barcelona", Country: "ESP", Players: homePlayers}
-	awayTeam := team.Team{Name: "Manchester City", Country: "GBR", Players: awayPlayers}
+	homeTeam := domain.Team{Name: "FC Barcelona", Country: "ESP", Players: homePlayers}
+	awayTeam := domain.Team{Name: "Manchester City", Country: "GBR", Players: awayPlayers}
 
-	homeStrategy := Strategy{
+	homeStrategy := domain.Strategy{
 		StrategyTeam:         homeTeam,
 		Formation:            "4-4-2",
 		PlayingStyle:         "possession",
@@ -80,7 +81,7 @@ func TestPlayMatch(t *testing.T) {
 		AttackFocus:          "wide_play",
 		KeyPlayerUsage:       "reference_player",
 	}
-	awayStrategy := Strategy{
+	awayStrategy := domain.Strategy{
 		StrategyTeam:         awayTeam,
 		Formation:            "4-4-2",
 		PlayingStyle:         "possession",
@@ -91,7 +92,7 @@ func TestPlayMatch(t *testing.T) {
 		AttackFocus:          "wide_play",
 		KeyPlayerUsage:       "reference_player"}
 
-	game := Match{
+	game := domain.Match{
 		HomeMatchStrategy: homeStrategy,
 		AwayMatchStrategy: awayStrategy,
 	}
@@ -100,7 +101,7 @@ func TestPlayMatch(t *testing.T) {
 	mockRepo.On("PostMatch", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	mockRepo.On("PostMatchEvent", mock.Anything).Return(nil)
 
-	service := NewApp(mockRepo)
+	service := match.NewApp(mockRepo)
 
 	result, err := service.PlayMatch(matchID)
 
