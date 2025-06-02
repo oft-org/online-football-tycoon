@@ -1,12 +1,12 @@
-go run main.go --help
+go run cmd/main.go --help
 
 
 run app with CLI COBRA:
-go run main.go server
+go run cmd/main.go server
 
 
 run migrations with CLI COBRA:
-go run main.go migrations
+go run cmd/main.go migrations
 
 
 fix dirty database:
