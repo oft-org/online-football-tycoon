@@ -18,7 +18,10 @@ var ServerCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Starts the API server",
 	Run: func(cmd *cobra.Command, args []string) {
-		_ = godotenv.Load()
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("failed to get env:", err)
+		}
 
 		requiredEnv := []string{"DB_USER", "DB_PASS", "DB_HOST", "DB_PORT", "DB_NAME"}
 		for _, env := range requiredEnv {
@@ -37,8 +40,6 @@ var ServerCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("failed to connect to database:", err)
 		}
-		// TODO: ahora aqui, este repository.NewRepository tiene que ser el repository que esta en internal/infraestructure/repositopry/match/reposiutory.go
-		// DONE: Ya lo es?? No comprendo
 		repo, err := repository.NewRepository(db)
 		if err != nil {
 			log.Fatal("failed to init repository:", err)

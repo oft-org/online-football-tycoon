@@ -13,8 +13,6 @@ var rootCmd = &cobra.Command{
 	Short: "Online Football Tycoon CLI",
 }
 
-// TODO: Corregir esto. Lo que hay dentro de Execute tiene que ir dentro del main. DONE
-
 func main() {
 	rootCmd.AddCommand(migrations.MigrationsCmd)
 	rootCmd.AddCommand(serverCmd.ServerCmd)

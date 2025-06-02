@@ -1,47 +1,22 @@
 version: '3'
 
-env:
-  DIR: "./cmd/migrations"
+vars:
+  MIGRATIONS_DIR: ./cmd/migrations
   POSTGRES_URI: "postgres://postgres:mysecretpassword@localhost:5432/online_football_tycoon?sslmode=disable"
-  POSTGRES_USER: "postgres"
-  POSTGRES_PASS: "mysecretpassword"
-  POSTGRES_HOST: "localhost"
-  POSTGRES_PORT: "5432"
-  POSTGRES_DB: "online_football_tycoon"
 
 tasks:
   migration-create:
     desc: "Create a new migration file"
     cmds:
-      - docker run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" migrate/migrate create -ext sql {{.CLI_ARGS}}
+      - docker run --rm -v {{.MIGRATIONS_DIR | fromSlash | abs | toSlash}}:/migrations/ migrate/migrate create -ext sql {{.CLI_ARGS}}
 
   migration-up:
     desc: "Run migrations UP"
     cmds:
-      - docker run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" --network host migrate/migrate -database ${POSTGRES_URI} -source "file:///migrations" up {{.CLI_ARGS}}
+      - go run cmd/main.go migrations
 
   migration-down:
     desc: "Run migrations DOWN (all)"
     cmds:
-      - docker run --rm -v ${PWD}${DIR}:/migrations/ --workdir="/migrations" --network host migrate/migrate -database ${POSTGRES_URI} -source "file:///migrations" down --all {{.CLI_ARGS}}
+      - docker run --rm -v {{.MIGRATIONS_DIR | fromSlash | abs | toSlash}}:/migrations/ --network host migrate/migrate -database "{{.POSTGRES_URI}}" -source "file:///migrations" down --all {{.CLI_ARGS}}
 
-  db-create:
-    desc: "Create the PostgreSQL database"
-    cmds:
-      - docker run --rm --network host postgres:15 psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -p ${POSTGRES_PORT} -c "CREATE DATABASE ${POSTGRES_DB} WITH OWNER ${POSTGRES_USER};"
-    env:
-      PGPASSWORD: ${POSTGRES_PASS}
-
-  db-drop:
-    desc: "Terminate connections and drop the PostgreSQL database"
-    cmds:
-      - |
-        docker run --rm --network host -e PGPASSWORD=${POSTGRES_PASS} postgres:15 psql \
-          -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -p ${POSTGRES_PORT} -d postgres \
-          -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${POSTGRES_DB}' AND pid <> pg_backend_pid();"
-      - |
-        docker run --rm --network host -e PGPASSWORD=${POSTGRES_PASS} postgres:15 psql \
-          -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -p ${POSTGRES_PORT} -d postgres \
-          -c "DROP DATABASE IF EXISTS ${POSTGRES_DB};"
-    env:
-      PGPASSWORD: ${POSTGRES_PASS}

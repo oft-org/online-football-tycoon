@@ -7,9 +7,6 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-// TODO: este repository no existe no? No vale el repositorio que tienes creado en internal/infrastructure/repository/repository.go porque ese es otro paquete, no tiene relación con este paquete
-// DONE: es ese solo que está en internal/infrastructure/repository/match/repository.go porque dijiste que lo metiese ahí x si crecía todo.
-// O es eso, o ni entiendo la pregunta
 func (r *Repository) GetMatchById(matchId uuid.UUID) (*domain.Match, error) {
 	var m domain.Match
 	var homeTeam, awayTeam domain.Team
