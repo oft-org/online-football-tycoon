@@ -1,0 +1,62 @@
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS oft.tournament (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(10) NOT NULL CHECK (type IN ('League', 'Cup')),
+    country_code CHAR(3) NOT NULL REFERENCES oft.country(code),
+    division INT NOT NULL CHECK (division >= 1),
+    promotion_to UUID REFERENCES oft.tournament(id) ON DELETE SET NULL,
+    descent_to UUID REFERENCES oft.tournament(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS oft.season (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tournament_id UUID NOT NULL REFERENCES oft.tournament(id) ON DELETE CASCADE,
+    from_date DATE NOT NULL,
+    to_date DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS oft.season_team (
+    season_id UUID NOT NULL REFERENCES oft.season(id) ON DELETE CASCADE,
+    team_id UUID NOT NULL REFERENCES oft.team(id) ON DELETE CASCADE,
+    PRIMARY KEY (season_id, team_id)
+);
+
+INSERT INTO oft.tournament (id, name, type, country_code, division)
+VALUES 
+  (gen_random_uuid(), 'Primera División', 'League', 'ESP', 1),
+  (gen_random_uuid(), 'Segunda División', 'League', 'ESP', 2),
+  (gen_random_uuid(), 'Copa de España', 'Cup', 'ESP', 1)
+ON CONFLICT (name) DO NOTHING;
+
+UPDATE oft.tournament AS t1
+SET promotion_to = t2.id
+FROM oft.tournament t2
+WHERE t1.name = 'Segunda División' AND t2.name = 'Primera División';
+
+UPDATE oft.tournament AS t1
+SET descent_to = t2.id
+FROM oft.tournament t2
+WHERE t1.name = 'Primera División' AND t2.name = 'Segunda División';
+
+INSERT INTO oft.season (id, tournament_id, from_date, to_date)
+SELECT gen_random_uuid(), t.id, DATE '2025-08-01', DATE '2026-05-30'
+FROM oft.tournament t
+WHERE t.name IN ('Primera División', 'Segunda División', 'Copa de España')
+  AND NOT EXISTS (
+    SELECT 1 FROM oft.season s WHERE s.tournament_id = t.id
+  );
+
+INSERT INTO oft.season_team (season_id, team_id)
+SELECT s.id, t.id
+FROM oft.season s
+CROSS JOIN (
+  SELECT id FROM oft.team LIMIT 5
+) t
+WHERE s.tournament_id IN (
+  SELECT id FROM oft.tournament WHERE name IN ('Primera División', 'Segunda División', 'Copa de España')
+)
+ON CONFLICT DO NOTHING;
+
+COMMIT;
