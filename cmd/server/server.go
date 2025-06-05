@@ -5,11 +5,13 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/match"
-	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http"
-	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/handler"
-	repository "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/match"
-
+	appMatch "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/match"
+	appPlayer "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/player"
+	httpServer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http"
+	handlerMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/match"
+	handlerPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/player"
+	repositoryMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/match"
+	repositoryPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/player"
 	internalPostgres "github.com/robertobouses/online-football-tycoon/internal/pkg/postgres"
 	"github.com/spf13/cobra"
 )
@@ -40,14 +42,19 @@ var ServerCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("failed to connect to database:", err)
 		}
-		repo, err := repository.NewRepository(db)
+		aRepo, err := repositoryMatch.NewRepository(db)
 		if err != nil {
 			log.Fatal("failed to init repository:", err)
 		}
-
-		app := match.NewApp(repo)
-		handler := handler.NewHandler(app)
-		s := http.NewServer(handler)
+		pRepo, err := repositoryPlayer.NewRepository(db)
+		if err != nil {
+			log.Fatal("failed to init repository:", err)
+		}
+		aMatch := appMatch.NewApp(aRepo)
+		aPlayer := appPlayer.NewApp(pRepo)
+		hMatch := handlerMatch.NewHandler(aMatch)
+		hPlayer := handlerPlayer.NewHandler(aPlayer)
+		s := httpServer.NewServer(hMatch, hPlayer)
 
 		if err := s.Run("8080"); err != nil {
 			log.Fatal("server failed:", err)

@@ -22,7 +22,7 @@ func NewPostgres(c DBConfig) (*sql.DB, error) {
 	var db *sql.DB
 	var err error
 
-	maxRetries := 10
+	maxRetries := 4
 
 	for i := 1; i <= maxRetries; i++ {
 		db, err = sql.Open("postgres", connString)

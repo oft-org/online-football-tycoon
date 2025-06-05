@@ -7,17 +7,21 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/handler"
+
+	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/match"
+	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/player"
 )
 
 type Server struct {
-	match  handler.Handler
+	match  match.Handler
+	player player.Handler
 	engine *gin.Engine
 }
 
-func NewServer(match handler.Handler) Server {
+func NewServer(match match.Handler, player player.Handler) Server {
 	return Server{
 		match:  match,
+		player: player,
 		engine: gin.Default(),
 	}
 }
@@ -34,6 +38,10 @@ func (s *Server) Run(port string) error {
 
 	match := s.engine.Group("/match")
 	match.POST("/play", s.match.PostMatchbyId)
+
+	player := s.engine.Group("/player")
+	player.POST("/generate", s.player.PostGeneratePlayer)
+
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))
 }
