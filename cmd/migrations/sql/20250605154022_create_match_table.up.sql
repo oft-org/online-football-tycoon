@@ -21,5 +21,4 @@ VALUES (
     2
 );
 
-
 COMMIT;

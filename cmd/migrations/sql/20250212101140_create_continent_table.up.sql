@@ -1,7 +1,5 @@
 BEGIN;
 
-CREATE SCHEMA IF NOT EXISTS oft;
-
 CREATE TABLE IF NOT EXISTS oft.continent (
     code TEXT PRIMARY KEY
 );
