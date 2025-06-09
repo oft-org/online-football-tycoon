@@ -27,8 +27,7 @@ INSERT INTO oft.tournament (id, name, type, country_code, division)
 VALUES 
   (gen_random_uuid(), 'Primera División', 'League', 'ESP', 1),
   (gen_random_uuid(), 'Segunda División', 'League', 'ESP', 2),
-  (gen_random_uuid(), 'Copa de España', 'Cup', 'ESP', 1)
-ON CONFLICT (name) DO NOTHING;
+  (gen_random_uuid(), 'Copa de España', 'Cup', 'ESP', 1);
 
 UPDATE oft.tournament AS t1
 SET promotion_to = t2.id
@@ -56,7 +55,6 @@ CROSS JOIN (
 ) t
 WHERE s.tournament_id IN (
   SELECT id FROM oft.tournament WHERE name IN ('Primera División', 'Segunda División', 'Copa de España')
-)
-ON CONFLICT DO NOTHING;
+);
 
 COMMIT;
