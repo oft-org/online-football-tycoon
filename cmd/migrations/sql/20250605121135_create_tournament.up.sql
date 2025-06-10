@@ -50,11 +50,32 @@ WHERE t.name IN ('Primera División', 'Segunda División', 'Copa de España')
 INSERT INTO oft.season_team (season_id, team_id)
 SELECT s.id, t.id
 FROM oft.season s
-CROSS JOIN (
-  SELECT id FROM oft.team LIMIT 5
-) t
-WHERE s.tournament_id IN (
-  SELECT id FROM oft.tournament WHERE name IN ('Primera División', 'Segunda División', 'Copa de España')
-);
+JOIN oft.tournament tor ON s.tournament_id = tor.id
+JOIN oft.team t ON (
+  (tor.name = 'Primera División' AND t.name IN (
+    'Club Deportivo Bahía Real',
+    'Atlético Sierra Norte',
+    'Unión Deportiva Costa Verde',
+    'Fútbol Club Valle Azul'
+  ))
 
-COMMIT;
+  OR
+  (tor.name = 'Segunda División' AND t.name IN (
+    'Club Atlético Rocafuerte',
+    'Deportivo Villa del Mar',
+    'Agrupación Deportiva Puente',
+    'Sporting Monteluz CF'
+  ))
+
+  OR
+  (tor.name = 'Copa de España' AND t.name IN (
+    'Club Deportivo Bahía Real',
+    'Atlético Sierra Norte',
+    'Unión Deportiva Costa Verde',
+    'Fútbol Club Valle Azul',
+    'Club Atlético Rocafuerte',
+    'Deportivo Villa del Mar',
+    'Agrupación Deportiva Puente',
+    'Sporting Monteluz CF'
+  ))
+);
