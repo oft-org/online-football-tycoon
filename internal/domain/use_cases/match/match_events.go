@@ -29,8 +29,6 @@ const (
 	EventTypeCounterAttack      EventType = "COUNTER_ATTACK"
 	EventTypeEndOfTheMatch      EventType = "END_OF_THE_MATCH"
 	EventTypeMatchBreak         EventType = "MATCH_BREAK"
-
-	//EventTypeGoal EventType = "GOAL"
 )
 
 func CalculateSuccessIndividualEvent(skill int) int {

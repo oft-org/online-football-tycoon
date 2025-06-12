@@ -7,11 +7,13 @@ import (
 	"github.com/joho/godotenv"
 	appMatch "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/match"
 	appPlayer "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/player"
+	appTeam "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/team"
 	httpServer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http"
 	handlerMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/match"
 	handlerPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/player"
 	repositoryMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/match"
 	repositoryPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/player"
+	repositoryTeam "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/team"
 	internalPostgres "github.com/robertobouses/online-football-tycoon/internal/pkg/postgres"
 	"github.com/spf13/cobra"
 )
@@ -42,19 +44,25 @@ var ServerCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("failed to connect to database:", err)
 		}
-		aRepo, err := repositoryMatch.NewRepository(db)
+		matchRepo, err := repositoryMatch.NewRepository(db)
 		if err != nil {
 			log.Fatal("failed to init repository:", err)
 		}
-		pRepo, err := repositoryPlayer.NewRepository(db)
+		playerRepo, err := repositoryPlayer.NewRepository(db)
 		if err != nil {
 			log.Fatal("failed to init repository:", err)
 		}
-		aMatch := appMatch.NewApp(aRepo)
-		aPlayer := appPlayer.NewApp(pRepo)
-		hMatch := handlerMatch.NewHandler(aMatch)
-		hPlayer := handlerPlayer.NewHandler(aPlayer)
-		s := httpServer.NewServer(hMatch, hPlayer)
+		teamRepo, err := repositoryTeam.NewRepository(db)
+		if err != nil {
+			log.Fatal("failed to init repository:", err)
+		}
+		matchApp := appMatch.NewApp(matchRepo)
+		playerApp := appPlayer.NewApp(playerRepo)
+		teamApp := appTeam.NewApp(teamRepo, *matchRepo)
+
+		matchHandler := handlerMatch.NewHandler(matchApp, teamApp)
+		playerHandler := handlerPlayer.NewHandler(playerApp)
+		s := httpServer.NewServer(matchHandler, playerHandler)
 
 		if err := s.Run("8080"); err != nil {
 			log.Fatal("server failed:", err)

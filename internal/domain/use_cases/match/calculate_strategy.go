@@ -3,6 +3,7 @@ package match
 import (
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
@@ -142,7 +143,7 @@ func CalculatePossessionChancesByFormation(lineup []domain.Player, formation str
 func CalculatePossessionChancesByPlayingStyle(lineup []domain.Player, playingStyle string) (teamPossession, teamChances, rivalChances float64, physique int, err error) {
 	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
 	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
-	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forwarder")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forward")
 
 	switch playingStyle {
 
@@ -404,29 +405,48 @@ func CalculateRivalChancesByKeyPlayerUsage(lineup []domain.Player, keyPlayerUsag
 }
 
 func getTwoBestPlayers(players []domain.Player, position string) (int, error) {
-	var foundPlayers int
-	bestPlayers := make([]domain.Player, 2)
+	var selected []domain.Player
 
 	for _, player := range players {
 		if player.Position == position {
-			if foundPlayers < 2 {
-				foundPlayers++
-				if foundPlayers == 1 || player.Technique+player.Mental+player.Physique > bestPlayers[0].Technique+bestPlayers[0].Mental+bestPlayers[0].Physique {
-					bestPlayers[1] = bestPlayers[0]
-					bestPlayers[0] = player
-				} else if foundPlayers == 2 || player.Technique+player.Mental+player.Physique > bestPlayers[1].Technique+bestPlayers[1].Mental+bestPlayers[1].Physique {
-					bestPlayers[1] = player
+			selected = append(selected, player)
+		}
+	}
+
+	if len(selected) < 2 {
+		for _, player := range players {
+			if player.Position == "Midfielder" && !containsPlayer(selected, player) {
+				selected = append(selected, player)
+				if len(selected) == 2 {
+					break
 				}
 			}
 		}
 	}
 
-	if foundPlayers < 2 {
-		return 0, errors.New("there are not enough players in the lineup")
+	if len(selected) < 2 {
+		return 0, errors.New("not enough suitable players available")
 	}
 
-	totalPlayersQuality := bestPlayers[0].Technique + bestPlayers[0].Mental + bestPlayers[0].Physique +
-		bestPlayers[1].Technique + bestPlayers[1].Mental + bestPlayers[1].Physique
+	sort.Slice(selected, func(i, j int) bool {
+		return playerTotalQuality(selected[i]) > playerTotalQuality(selected[j])
+	})
 
-	return totalPlayersQuality, nil
+	bestPlayers := selected[:2]
+
+	totalQuality := playerTotalQuality(bestPlayers[0]) + playerTotalQuality(bestPlayers[1])
+	return totalQuality, nil
+}
+
+func playerTotalQuality(p domain.Player) int {
+	return p.Technique + p.Mental + p.Physique
+}
+
+func containsPlayer(players []domain.Player, onePlayer domain.Player) bool {
+	for _, player := range players {
+		if player.PlayerId == onePlayer.PlayerId {
+			return true
+		}
+	}
+	return false
 }

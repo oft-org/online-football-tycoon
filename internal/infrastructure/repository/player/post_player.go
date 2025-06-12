@@ -26,7 +26,7 @@ func (r *Repository) PostPlayer(player domain.Player) error {
 	)
 
 	if err != nil {
-		log.Print("Error executing PostMatch statement:", err)
+		log.Print("Error executing PostPlayer statement:", err)
 		return err
 	}
 

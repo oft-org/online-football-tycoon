@@ -9,12 +9,18 @@ type App interface {
 	PlayMatch(matchID uuid.UUID) (domain.Result, error)
 }
 
-func NewHandler(app App) Handler {
+type TeamApp interface {
+	GenerateRoundRobinSchedule() error
+}
+
+func NewHandler(app App, teamApp TeamApp) Handler {
 	return Handler{
-		app: app,
+		app:     app,
+		teamApp: teamApp,
 	}
 }
 
 type Handler struct {
-	app App
+	app     App
+	teamApp TeamApp
 }

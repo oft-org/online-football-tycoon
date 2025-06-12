@@ -35,6 +35,10 @@ func (m *MockMatchRepository) PostMatchEvent(event domain.MatchEventInfo) error 
 	return args.Error(0)
 }
 
+func (m *MockMatchRepository) PostMatches(matches []domain.SeasonMatch) error {
+	args := m.Called(matches)
+	return args.Error(0)
+}
 func TestPlayMatch(t *testing.T) {
 	matchID := uuid.New()
 
@@ -100,6 +104,7 @@ func TestPlayMatch(t *testing.T) {
 	mockRepo.On("GetMatchById", matchID).Return(&game, nil)
 	mockRepo.On("PostMatch", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	mockRepo.On("PostMatchEvent", mock.Anything).Return(nil)
+	mockRepo.On("PostMatches", mock.Anything).Return(nil)
 
 	service := match.NewApp(mockRepo)
 

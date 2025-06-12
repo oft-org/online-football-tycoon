@@ -13,10 +13,10 @@ type MatchId struct {
 	MatchId uuid.UUID `json:"match_id"`
 }
 
-func (h Handler) PostMatchbyId(c *gin.Context) {
+func (h Handler) PostPlayMatchbyId(c *gin.Context) {
 	var req MatchId
 	if err := c.BindJSON(&req); err != nil {
-		log.Printf("[PostMatchbyId] error parsing request: %v", err)
+		log.Printf("[PostPlayMatchbyId] error parsing request: %v", err)
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
