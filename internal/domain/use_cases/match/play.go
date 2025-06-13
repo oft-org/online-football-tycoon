@@ -15,7 +15,6 @@ func NewSimulator() Simulator {
 }
 func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, error) {
 	homeLineup := m.HomeMatchStrategy.StrategyTeam.Players
-
 	for count, player := range homeLineup {
 		log.Printf("home lineup player #%d: %+v", count, player)
 	}
@@ -23,14 +22,29 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 	for count, player := range awayLineup {
 		log.Printf("Away lineup player #%d: %+v", count, player)
 	}
+
 	log.Printf("Home Strategy Team details: %+v", m.HomeMatchStrategy.StrategyTeam)
 	log.Printf("Home Strategy Team Players: %+v", m.HomeMatchStrategy.StrategyTeam.Players)
 
 	homeTeam := m.HomeMatchStrategy.StrategyTeam
-
 	awayTeam := m.AwayMatchStrategy.StrategyTeam
 
 	log.Printf("Rival Lineup (Team %s): %+v", awayTeam.Id, awayLineup)
+
+	homeStrategy := m.HomeMatchStrategy
+	awayStrategy := m.AwayMatchStrategy
+
+	homeResultOfStrategy, err := CalculateResultOfStrategy(homeLineup, homeStrategy.Formation, homeStrategy.PlayingStyle, homeStrategy.GameTempo, homeStrategy.PassingStyle, homeStrategy.DefensivePositioning, homeStrategy.BuildUpPlay, homeStrategy.AttackFocus, homeStrategy.KeyPlayerUsage)
+	if err != nil {
+
+		return domain.Result{}, []domain.EventResult{}, fmt.Errorf("error in calculating the result of the homeStrategy HOME: %w", err)
+	}
+
+	awayResultOfStrategy, err := CalculateResultOfStrategy(awayLineup, awayStrategy.Formation, awayStrategy.PlayingStyle, awayStrategy.GameTempo, awayStrategy.PassingStyle, awayStrategy.DefensivePositioning, awayStrategy.BuildUpPlay, awayStrategy.AttackFocus, awayStrategy.KeyPlayerUsage)
+	if err != nil {
+
+		return domain.Result{}, []domain.EventResult{}, fmt.Errorf("error in calculating the result of the awayStrategy AWAY: %w", err)
+	}
 
 	numberOfMatchEvents, err := CalculateNumberOfMatchEvents(m.HomeMatchStrategy.GameTempo, m.AwayMatchStrategy.GameTempo)
 	if err != nil {
@@ -39,14 +53,18 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 	}
 	log.Println("numberOfMatchEvents", numberOfMatchEvents)
 
-	numberOfLineupEvents, numberOfRivalEvents, err := DistributeMatchEvents(m.HomeMatchStrategy.StrategyTeam, m.AwayMatchStrategy.StrategyTeam, numberOfMatchEvents)
+	homeFactorNumberEvents := homeResultOfStrategy.teamChances + awayResultOfStrategy.rivalChances
+	awayFactorNumberEvents := awayResultOfStrategy.teamChances + homeResultOfStrategy.rivalChances
+
+	numberOfHomeEvents, numberOfAwayEvents, err := DistributeMatchEvents(m.HomeMatchStrategy.StrategyTeam, m.AwayMatchStrategy.StrategyTeam, numberOfMatchEvents, homeFactorNumberEvents, awayFactorNumberEvents)
 	if err != nil {
 		log.Println("error al distribuir numberOfMatchEvents", err)
 		return domain.Result{}, []domain.EventResult{}, err
 	}
-	log.Println("numberOfLineupEvents, numberOfRivalEvents", numberOfLineupEvents, numberOfRivalEvents)
+	log.Println("numberOfLineupEvents, numberOfRivalEvents", numberOfHomeEvents, numberOfAwayEvents)
 
-	matchEventStats := GenerateEvents(homeTeam, awayTeam, numberOfLineupEvents, numberOfRivalEvents)
+	matchEventStats := GenerateEvents(homeTeam, awayTeam, numberOfHomeEvents, numberOfAwayEvents)
+
 	breakMatch := domain.EventResult{
 		Minute:    45,
 		EventType: string(EventTypeMatchBreak),
@@ -60,6 +78,7 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 		Event:     "Final del Partido",
 		TeamId:    homeTeam.Id,
 	}
+
 	allEvents := append(matchEventStats.HomeEvents, matchEventStats.AwayEvents...)
 	allEvents = append(allEvents, breakMatch, endMatch)
 	sort.Slice(allEvents, func(i, j int) bool {
@@ -69,15 +88,8 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 	totalHomeTechnique, totalHomeMental, totalHomePhysique := totalStats(homeLineup)
 	totalAwayTechnique, totalAwayMental, totalAwayPhysique := totalStats(awayLineup)
 
-	strategy := m.HomeMatchStrategy
-
-	resultOfStrategy, err := CalculateResultOfStrategy(homeLineup, strategy.Formation, strategy.PlayingStyle, strategy.GameTempo, strategy.PassingStyle, strategy.DefensivePositioning, strategy.BuildUpPlay, strategy.AttackFocus, strategy.KeyPlayerUsage)
-	if err != nil {
-
-		return domain.Result{}, []domain.EventResult{}, fmt.Errorf("error in calculating the result of the strategy: %w", err)
-	}
-
-	totalHomePhysique = totalHomePhysique + int(resultOfStrategy["teamPhysique"])
+	totalHomePhysique = totalHomePhysique + homeResultOfStrategy.teamPhysique
+	totalAwayPhysique = totalAwayPhysique + awayResultOfStrategy.teamPhysique
 
 	lineupTotalQuality, rivalTotalQuality, allQuality, err := CalculateTotalQuality(totalHomeTechnique, totalHomeMental, totalHomePhysique, totalAwayTechnique, totalAwayMental, totalAwayPhysique)
 	if err != nil {
@@ -85,7 +97,8 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 		return domain.Result{}, []domain.EventResult{}, err
 	}
 	log.Printf("Total Quality: player %d, rival %d, total quality %d\n", lineupTotalQuality, rivalTotalQuality, allQuality)
-	lineupPercentagePossession, rivalPercentagePossession, err := CalculateBallPossession(totalHomeTechnique, totalHomeMental, lineupTotalQuality, rivalTotalQuality, allQuality, resultOfStrategy["teamPossession"])
+
+	lineupPercentagePossession, rivalPercentagePossession, err := CalculateBallPossession(totalHomeTechnique, totalHomeMental, lineupTotalQuality, rivalTotalQuality, allQuality, homeResultOfStrategy.teamPossession, awayResultOfStrategy.teamPossession)
 	if err != nil {
 		log.Println("Error CalculateBallPossession:", err)
 		return domain.Result{}, []domain.EventResult{}, err

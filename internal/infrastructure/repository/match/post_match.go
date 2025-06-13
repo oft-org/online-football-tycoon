@@ -7,8 +7,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *Repository) PostMatch(homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error {
+func (r *Repository) PostMatch(seasonId, homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error {
+
 	_, err := r.postMatch.Exec(
+		seasonId,
 		homeTeamId,
 		awayTeamId,
 		matchDate,

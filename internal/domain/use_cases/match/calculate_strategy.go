@@ -8,48 +8,53 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func CalculateResultOfStrategy(lineup []domain.Player, formation, playingStyle, gameTempo, passingStyle, defensivePositioning, buildUpPlay, attackFocus, keyPlayerUsage string) (result map[string]float64, err error) {
+type strategyResult struct {
+	teamPossession float64
+	teamChances    float64
+	rivalChances   float64
+	teamPhysique   int
+}
 
-	result = make(map[string]float64)
+func CalculateResultOfStrategy(lineup []domain.Player, formation, playingStyle, gameTempo, passingStyle, defensivePositioning, buildUpPlay, attackFocus, keyPlayerUsage string) (result strategyResult, err error) {
 
 	teamPossessionFormation, teamChancesFormation, rivalChancesFormation, err := CalculatePossessionChancesByFormation(lineup, formation)
 	if err != nil {
-		return nil, fmt.Errorf("Error in formation: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in formation: %v", err)
 	}
 
 	teamPossessionStyle, teamChancesStyle, rivalChancesStyle, physiqueStyle, err := CalculatePossessionChancesByPlayingStyle(lineup, playingStyle)
 	if err != nil {
-		return nil, fmt.Errorf("Error in playing style: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in playing style: %v", err)
 	}
 
 	teamPossessionTempo, teamChancesTempo, rivalChancesTempo, physiqueTempo, err := CalculatePossessionChancesByGameTempo(gameTempo)
 	if err != nil {
-		return nil, fmt.Errorf("Error in game tempo: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in game tempo: %v", err)
 	}
 
 	teamPossessionPassing, rivalChancesPassing, err := CalculatePossessionChancesByPassingStyle(passingStyle)
 	if err != nil {
-		return nil, fmt.Errorf("Error in passing style: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in passing style: %v", err)
 	}
 
 	rivalChancesDefensivePositioning, physiqueDefensive, err := CalculateRivalChancesByDefensivePositioning(lineup, defensivePositioning)
 	if err != nil {
-		return nil, fmt.Errorf("Error in defensive positioning: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in defensive positioning: %v", err)
 	}
 
 	teamPossessionBuildUpPlay, err := CalculatePossessionByBuildUpPlay(lineup, buildUpPlay)
 	if err != nil {
-		return nil, fmt.Errorf("Error in build-up play: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in build-up play: %v", err)
 	}
 
 	rivalChancesAttackFocus, err := CalculateRivalChancesByAttackFocus(lineup, attackFocus)
 	if err != nil {
-		return nil, fmt.Errorf("Error in rival chances by attack focus: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in rival chances by attack focus: %v", err)
 	}
 
 	teamPossessionKeyPlayer, teamChancesKeyPlayer, err := CalculateRivalChancesByKeyPlayerUsage(lineup, keyPlayerUsage)
 	if err != nil {
-		return nil, fmt.Errorf("Error in rival chances by key player usage: %v", err)
+		return strategyResult{}, fmt.Errorf("Error in rival chances by key player usage: %v", err)
 	}
 
 	totalTeamPossession := (teamPossessionFormation + teamPossessionStyle + teamPossessionTempo + teamPossessionPassing + teamPossessionBuildUpPlay + teamPossessionKeyPlayer) / 6
@@ -58,11 +63,12 @@ func CalculateResultOfStrategy(lineup []domain.Player, formation, playingStyle, 
 
 	totalPhysique := physiqueStyle + physiqueTempo + physiqueDefensive
 
-	result["teamPossession"] = totalTeamPossession
-	result["teamChances"] = totalTeamChances
-	result["rivalChances"] = totalRivalChances
-	result["teamPhysique"] = float64(totalPhysique)
-
+	result = strategyResult{
+		teamPossession: totalTeamPossession,
+		teamChances:    totalTeamChances,
+		rivalChances:   totalRivalChances,
+		teamPhysique:   totalPhysique,
+	}
 	return result, nil
 }
 
@@ -142,9 +148,17 @@ func CalculatePossessionChancesByFormation(lineup []domain.Player, formation str
 
 func CalculatePossessionChancesByPlayingStyle(lineup []domain.Player, playingStyle string) (teamPossession, teamChances, rivalChances float64, physique int, err error) {
 	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
 	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
 	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forward")
-
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
 	switch playingStyle {
 
 	case "possession":

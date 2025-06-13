@@ -9,7 +9,7 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func (a AppService) PlayMatch(matchID uuid.UUID) (domain.Result, error) {
+func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error) {
 	m, err := a.repo.GetMatchById(matchID)
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("error retrieving match: %w", err)
@@ -29,7 +29,7 @@ func (a AppService) PlayMatch(matchID uuid.UUID) (domain.Result, error) {
 
 	log.Printf("Match played: homeTeamID=%s, awayTeamID=%s", homeTeamId, awayTeamId)
 
-	err = a.repo.PostMatch(homeTeamId, awayTeamId, matchDate, result.HomeStats.Goals, result.AwayStats.Goals)
+	err = a.repo.PostMatch(seasonID, homeTeamId, awayTeamId, matchDate, result.HomeStats.Goals, result.AwayStats.Goals)
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("error PostMatch: %w", err)
 	}

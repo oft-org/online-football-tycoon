@@ -25,8 +25,8 @@ func (m *MockMatchRepository) GetMatchById(matchID uuid.UUID) (*domain.Match, er
 	return match, args.Error(1)
 }
 
-func (m *MockMatchRepository) PostMatch(homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error {
-	args := m.Called(homeTeamId, awayTeamId, matchDate, homeGoals, awayGoals)
+func (m *MockMatchRepository) PostMatch(seasonId, homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error {
+	args := m.Called(seasonId, homeTeamId, awayTeamId, matchDate, homeGoals, awayGoals)
 	return args.Error(0)
 }
 
@@ -41,6 +41,7 @@ func (m *MockMatchRepository) PostMatches(matches []domain.SeasonMatch) error {
 }
 func TestPlayMatch(t *testing.T) {
 	matchID := uuid.New()
+	seasonID := uuid.New()
 
 	mockRepo := new(MockMatchRepository)
 
@@ -108,7 +109,7 @@ func TestPlayMatch(t *testing.T) {
 
 	service := match.NewApp(mockRepo)
 
-	result, err := service.PlayMatch(matchID)
+	result, err := service.PlayMatch(seasonID, matchID)
 
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)

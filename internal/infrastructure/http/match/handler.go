@@ -6,7 +6,7 @@ import (
 )
 
 type App interface {
-	PlayMatch(matchID uuid.UUID) (domain.Result, error)
+	PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error)
 }
 
 type TeamApp interface {

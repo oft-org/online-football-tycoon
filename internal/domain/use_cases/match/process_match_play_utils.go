@@ -40,30 +40,38 @@ func CalculateNumberOfMatchEvents(homeGameTempo, awayGameTempo string) (int, err
 	return numberOfMatchEvents, nil
 }
 
-func DistributeMatchEvents(home, awayHome domain.Team, numberOfMatchEvents int) (int, int, error) {
-	log.Println("home en DistributeMatchEvents", home)
-	log.Println("away en DistributeMatchEvents", awayHome)
+func DistributeMatchEvents(home, away domain.Team, numberOfMatchEvents int, homeFactorNumberEvents, awayFactorNumberEvents float64) (int, int, error) {
+	log.Println("home team in DistributeMatchEvents", home)
+	log.Println("away team in DistributeMatchEvents", away)
+
 	homeTotalQuality, err := CalculateQuality(home)
 	if err != nil {
 		return 0, 0, err
 	}
 	log.Println("total home Quality", homeTotalQuality)
-	awayTotalQuality, err := CalculateQuality(awayHome)
+	awayTotalQuality, err := CalculateQuality(away)
 	if err != nil {
 		return 0, 0, err
 	}
 	log.Println("total away Quality", awayTotalQuality)
 	allQuality := homeTotalQuality + awayTotalQuality
+
 	var homeEvents int
 	homeProportion := float64(homeTotalQuality) / float64(allQuality)
 
-	homeEvents = int(homeProportion*float64(numberOfMatchEvents)) + rand.Intn(4) + 2
+	homeEvents = int(homeProportion*float64(numberOfMatchEvents)) + rand.Intn(3) + 1
 
-	log.Printf("number of home events %v ANTES DE RANDOMFACTOR", homeEvents)
+	log.Printf("number of home events %v BEFORE RANDOMFACTOR", homeEvents)
 
-	randomFactor := rand.Intn(11) - 5
+	homeEvents = homeEvents * int(homeFactorNumberEvents) / int(awayFactorNumberEvents)
+
+	randomFactor := rand.Intn(5) - 3
 
 	homeEvents += randomFactor
+
+	if homeEvents > numberOfMatchEvents {
+		homeEvents = numberOfMatchEvents - rand.Intn(2)
+	}
 
 	awayEvents := numberOfMatchEvents - homeEvents
 	log.Printf("number of home events %v, away events %v Despues DE RANDOMFACTOR", homeEvents, awayEvents)
@@ -86,15 +94,6 @@ func CalculateQuality(home domain.Team) (int, error) {
 	}
 
 	return 2*totalTechnique + 3*totalMental + 2*totalPhysique, nil
-}
-
-func clamp(value int, min int, max int) int {
-	if value < min {
-		return min
-	} else if value > max {
-		return max
-	}
-	return value
 }
 
 func GetRandomDefender(home []domain.Player) *domain.Player {
