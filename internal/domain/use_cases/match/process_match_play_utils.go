@@ -41,6 +41,14 @@ func CalculateNumberOfMatchEvents(homeGameTempo, awayGameTempo string) (int, err
 }
 
 func DistributeMatchEvents(home, away domain.Team, numberOfMatchEvents int, homeFactorNumberEvents, awayFactorNumberEvents float64) (int, int, error) {
+	const (
+		homeEventMaxBonus       = 3
+		homeEventBaseBonus      = 1
+		homeEventRandomRange    = 5
+		homeEventRandomOffset   = 3
+		homeEventOverflowAdjust = 2
+	)
+
 	log.Println("home team in DistributeMatchEvents", home)
 	log.Println("away team in DistributeMatchEvents", away)
 
@@ -59,18 +67,18 @@ func DistributeMatchEvents(home, away domain.Team, numberOfMatchEvents int, home
 	var homeEvents int
 	homeProportion := float64(homeTotalQuality) / float64(allQuality)
 
-	homeEvents = int(homeProportion*float64(numberOfMatchEvents)) + rand.Intn(3) + 1
+	homeEvents = int(homeProportion*float64(numberOfMatchEvents)) + rand.Intn(homeEventMaxBonus) + homeEventBaseBonus
 
 	log.Printf("number of home events %v BEFORE RANDOMFACTOR", homeEvents)
 
 	homeEvents = homeEvents * int(homeFactorNumberEvents) / int(awayFactorNumberEvents)
 
-	randomFactor := rand.Intn(5) - 3
+	randomFactor := rand.Intn(homeEventRandomRange) - homeEventRandomOffset
 
 	homeEvents += randomFactor
 
 	if homeEvents > numberOfMatchEvents {
-		homeEvents = numberOfMatchEvents - rand.Intn(2)
+		homeEvents = numberOfMatchEvents - rand.Intn(homeEventOverflowAdjust)
 	}
 
 	awayEvents := numberOfMatchEvents - homeEvents

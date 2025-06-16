@@ -1,14 +1,27 @@
 package match
 
 import (
+	"log"
+	"net/http"
 	nethttp "net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
-func (h Handler) PostSeasonMatches(c *gin.Context) {
+type RoundRobinScheduleRequest struct {
+	SeasionID uuid.UUID `json:"season_id"`
+}
 
-	err := h.teamApp.GenerateRoundRobinSchedule()
+func (h Handler) PostSeasonMatches(c *gin.Context) {
+	var req RoundRobinScheduleRequest
+	if err := c.BindJSON(&req); err != nil {
+		log.Printf("[PostSeasonMatches] error parsing request: %v", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	err := h.teamApp.GenerateRoundRobinSchedule(req.SeasionID)
 	if err != nil {
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

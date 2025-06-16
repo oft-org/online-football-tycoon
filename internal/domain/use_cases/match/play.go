@@ -53,8 +53,8 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 	}
 	log.Println("numberOfMatchEvents", numberOfMatchEvents)
 
-	homeFactorNumberEvents := homeResultOfStrategy.teamChances + awayResultOfStrategy.rivalChances
-	awayFactorNumberEvents := awayResultOfStrategy.teamChances + homeResultOfStrategy.rivalChances
+	homeFactorNumberEvents := homeResultOfStrategy.homeChances + awayResultOfStrategy.awayChances
+	awayFactorNumberEvents := awayResultOfStrategy.homeChances + homeResultOfStrategy.awayChances
 
 	numberOfHomeEvents, numberOfAwayEvents, err := DistributeMatchEvents(m.HomeMatchStrategy.StrategyTeam, m.AwayMatchStrategy.StrategyTeam, numberOfMatchEvents, homeFactorNumberEvents, awayFactorNumberEvents)
 	if err != nil {
@@ -88,8 +88,8 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 	totalHomeTechnique, totalHomeMental, totalHomePhysique := totalStats(homeLineup)
 	totalAwayTechnique, totalAwayMental, totalAwayPhysique := totalStats(awayLineup)
 
-	totalHomePhysique = totalHomePhysique + homeResultOfStrategy.teamPhysique
-	totalAwayPhysique = totalAwayPhysique + awayResultOfStrategy.teamPhysique
+	totalHomePhysique = totalHomePhysique + homeResultOfStrategy.homePhysique
+	totalAwayPhysique = totalAwayPhysique + awayResultOfStrategy.homePhysique
 
 	lineupTotalQuality, rivalTotalQuality, allQuality, err := CalculateTotalQuality(totalHomeTechnique, totalHomeMental, totalHomePhysique, totalAwayTechnique, totalAwayMental, totalAwayPhysique)
 	if err != nil {
@@ -98,7 +98,7 @@ func (s Simulator) Play(m *domain.Match) (domain.Result, []domain.EventResult, e
 	}
 	log.Printf("Total Quality: player %d, rival %d, total quality %d\n", lineupTotalQuality, rivalTotalQuality, allQuality)
 
-	lineupPercentagePossession, rivalPercentagePossession, err := CalculateBallPossession(totalHomeTechnique, totalHomeMental, lineupTotalQuality, rivalTotalQuality, allQuality, homeResultOfStrategy.teamPossession, awayResultOfStrategy.teamPossession)
+	lineupPercentagePossession, rivalPercentagePossession, err := CalculateBallPossession(totalHomeTechnique, totalHomeMental, lineupTotalQuality, rivalTotalQuality, allQuality, homeResultOfStrategy.homePossession, awayResultOfStrategy.homePossession)
 	if err != nil {
 		log.Println("Error CalculateBallPossession:", err)
 		return domain.Result{}, []domain.EventResult{}, err

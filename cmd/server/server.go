@@ -46,15 +46,15 @@ var ServerCmd = &cobra.Command{
 		}
 		matchRepo, err := repositoryMatch.NewRepository(db)
 		if err != nil {
-			log.Fatal("failed to init repository:", err)
+			log.Fatal("failed to init match repository:", err)
 		}
 		playerRepo, err := repositoryPlayer.NewRepository(db)
 		if err != nil {
-			log.Fatal("failed to init repository:", err)
+			log.Fatal("failed to init player repository:", err)
 		}
 		teamRepo, err := repositoryTeam.NewRepository(db)
 		if err != nil {
-			log.Fatal("failed to init repository:", err)
+			log.Fatal("failed to init team repository:", err)
 		}
 		matchApp := appMatch.NewApp(matchRepo)
 		playerApp := appPlayer.NewApp(playerRepo)

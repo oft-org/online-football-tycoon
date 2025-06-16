@@ -10,7 +10,7 @@ type App interface {
 }
 
 type TeamApp interface {
-	GenerateRoundRobinSchedule() error
+	GenerateRoundRobinSchedule(seasonID uuid.UUID) error
 }
 
 func NewHandler(app App, teamApp TeamApp) Handler {

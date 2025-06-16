@@ -5,31 +5,18 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func (a AppService) GenerateRoundRobinSchedule() error {
-	seasonTeams, err := a.repo.GetSeasonTeam()
+func (a AppService) GenerateRoundRobinSchedule(seasonID uuid.UUID) error {
+	teamIDs, err := a.repo.GetSeasonTeam(seasonID)
 	if err != nil {
 		return err
 	}
 
-	seasonMap := groupTeamsBySeason(seasonTeams)
+	matches := generateMatchesForSeason(seasonID, teamIDs)
 
-	for seasonID, teamIDs := range seasonMap {
-		matches := generateMatchesForSeason(seasonID, teamIDs)
-
-		if err := a.matchRepo.PostMatches(matches); err != nil {
-			return err
-		}
+	if err := a.matchRepo.PostMatches(matches); err != nil {
+		return err
 	}
-
 	return nil
-}
-
-func groupTeamsBySeason(seasonTeams []domain.SeasonTeam) map[uuid.UUID][]uuid.UUID {
-	seasonMap := make(map[uuid.UUID][]uuid.UUID)
-	for _, st := range seasonTeams {
-		seasonMap[st.SeasonID] = append(seasonMap[st.SeasonID], st.TeamID)
-	}
-	return seasonMap
 }
 
 func generateMatchesForSeason(seasonID uuid.UUID, teamIDs []uuid.UUID) []domain.SeasonMatch {

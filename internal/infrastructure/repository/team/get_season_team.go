@@ -1,27 +1,25 @@
 package team
 
 import (
-	"github.com/robertobouses/online-football-tycoon/internal/domain"
+	"github.com/google/uuid"
 )
 
-func (r *Repository) GetSeasonTeam() ([]domain.SeasonTeam, error) {
-	rows, err := r.getSeasonTeam.Query()
+func (r *Repository) GetSeasonTeam(seasonId uuid.UUID) ([]uuid.UUID, error) {
+	rows, err := r.getSeasonTeam.Query(seasonId)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var seasonTeams []domain.SeasonTeam
+	var seasonTeams []uuid.UUID
+
 	for rows.Next() {
-		var seasonTeam domain.SeasonTeam
-		err := rows.Scan(
-			&seasonTeam.SeasonID,
-			&seasonTeam.TeamID,
-		)
+		var teamID uuid.UUID
+		err := rows.Scan(&teamID)
 		if err != nil {
 			return nil, err
 		}
-		seasonTeams = append(seasonTeams, seasonTeam)
+		seasonTeams = append(seasonTeams, teamID)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
