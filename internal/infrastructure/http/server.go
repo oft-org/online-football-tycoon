@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-
+	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/classification"
 	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/match"
 	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/player"
 )
@@ -15,6 +15,7 @@ import (
 type Server struct {
 	match  match.Handler
 	player player.Handler
+	sesion classification.Handler
 	engine *gin.Engine
 }
 
@@ -42,6 +43,9 @@ func (s *Server) Run(port string) error {
 
 	player := s.engine.Group("/player")
 	player.POST("/generate", s.player.PostGeneratePlayer)
+
+	season := s.engine.Group("/season")
+	season.GET("/:season_id/classification")
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))
