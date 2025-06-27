@@ -15,7 +15,7 @@ import (
 type Server struct {
 	match  match.Handler
 	player player.Handler
-	sesion classification.Handler
+	season classification.Handler
 	engine *gin.Engine
 }
 
@@ -40,12 +40,13 @@ func (s *Server) Run(port string) error {
 	match := s.engine.Group("/match")
 	match.POST("/play", s.match.PostPlayMatchbyId)
 	match.POST("/season", s.match.PostSeasonMatches)
+	match.GET("/pending?timestamp=:timestamp", s.match.GetPendingMatches)
 
 	player := s.engine.Group("/player")
 	player.POST("/generate", s.player.PostGeneratePlayer)
 
 	season := s.engine.Group("/season")
-	season.GET("/:season_id/classification")
+	season.GET("/:season_id/classification", s.season.GetClassification)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))

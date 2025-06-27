@@ -10,7 +10,7 @@ import (
 )
 
 type RoundRobinScheduleRequest struct {
-	SeasionID uuid.UUID `json:"season_id"`
+	SeasonID uuid.UUID `json:"season_id"`
 }
 
 func (h Handler) PostSeasonMatches(c *gin.Context) {
@@ -21,7 +21,7 @@ func (h Handler) PostSeasonMatches(c *gin.Context) {
 		return
 	}
 
-	err := h.teamApp.GenerateRoundRobinSchedule(req.SeasionID)
+	err := h.teamApp.GenerateRoundRobinSchedule(req.SeasonID)
 	if err != nil {
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
