@@ -1,5 +1,5 @@
 SELECT 
-			match_id,
+			id,
 			season_id,
 			home_team,
 			away_team,

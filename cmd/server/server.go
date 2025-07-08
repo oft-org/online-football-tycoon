@@ -5,12 +5,15 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	appClassification "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/classification"
 	appMatch "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/match"
 	appPlayer "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/player"
 	appTeam "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/team"
 	httpServer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http"
+	handlerClassification "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/classification"
 	handlerMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/match"
 	handlerPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/player"
+	repositoryClassification "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/classification"
 	repositoryMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/match"
 	repositoryPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/player"
 	repositoryTeam "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/team"
@@ -56,13 +59,22 @@ var ServerCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("failed to init team repository:", err)
 		}
+		classificationRepo, err := repositoryClassification.NewRepository(db)
+		if err != nil {
+			log.Fatal("failde to init classification repository:", err)
+
+		}
+
 		matchApp := appMatch.NewApp(matchRepo)
 		playerApp := appPlayer.NewApp(playerRepo)
 		teamApp := appTeam.NewApp(teamRepo, *matchRepo)
+		classificationApp := appClassification.NewApp(classificationRepo)
 
 		matchHandler := handlerMatch.NewHandler(matchApp, teamApp)
 		playerHandler := handlerPlayer.NewHandler(playerApp)
-		s := httpServer.NewServer(matchHandler, playerHandler)
+		classificationHandler := handlerClassification.NewHandler(classificationApp)
+
+		s := httpServer.NewServer(matchHandler, playerHandler, classificationHandler)
 
 		if err := s.Run("8080"); err != nil {
 			log.Fatal("server failed:", err)

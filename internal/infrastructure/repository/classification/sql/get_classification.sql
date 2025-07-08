@@ -1,12 +1,12 @@
 SELECT 
-te.team_id,
-te.team_name,
+te.id,
+te.name,
 cl.points,
-cl.goalsFor,
-cl.goalsAgainst,
-(cl.goalsFor-cl.goalsAgainst) AS goal_difference
-FROM oft.season_team st 
-JOIN oft.team te ON oft.season_team.team_id
-JOIN oft.classification cl ON oft.classification.team_id = oft.team.team_id
+cl.goals_for,
+cl.goals_against,
+(cl.goals_for-cl.goals_against) AS goal_difference
+FROM oft.season_team st
+JOIN oft.team te ON st.team_id = te.id
+JOIN oft.classification cl ON cl.team_id = te.id
 WHERE st.season_id = $1
-ORDER BY oft.classification.points DESC, goal_difference DESC;
+ORDER BY cl.points DESC, goal_difference DESC;
