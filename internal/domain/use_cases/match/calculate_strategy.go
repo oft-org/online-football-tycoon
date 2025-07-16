@@ -117,15 +117,15 @@ func CalculateResultOfStrategy(lineup []domain.Player, formation, playingStyle, 
 
 func CalculatePossessionChancesByFormation(lineup []domain.Player, formation string) (result formationResult, err error) {
 
-	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
+	totalDefendersQuality, err := getTwoBestPlayers(lineup, domain.PositionDefender)
 	if err != nil {
 		return formationResult{}, fmt.Errorf("Error getting two best defenders, in getTwoBestPlayers : %v", err)
 	}
-	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
+	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, domain.PositionMidfielder)
 	if err != nil {
 		return formationResult{}, fmt.Errorf("Error getting two best midfielders, in getTwoBestPlayers: %v", err)
 	}
-	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forward")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, domain.PositionForward)
 	if err != nil {
 		return formationResult{}, fmt.Errorf("Error getting two best forwarders, in getTwoBestPlayers: %v", err)
 	}
@@ -192,17 +192,17 @@ func CalculatePossessionChancesByFormation(lineup []domain.Player, formation str
 }
 
 func CalculatePossessionChancesByPlayingStyle(lineup []domain.Player, playingStyle string) (result playingStyleResult, err error) {
-	totalDefendersQuality, err := getTwoBestPlayers(lineup, "defender")
+	totalDefendersQuality, err := getTwoBestPlayers(lineup, domain.PositionDefender)
 	if err != nil {
 		return playingStyleResult{}, fmt.Errorf("error getting two best defenders: %v", err)
 	}
 
-	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, "midfielder")
+	totalMidfieldersQuality, err := getTwoBestPlayers(lineup, domain.PositionMidfielder)
 	if err != nil {
 		return playingStyleResult{}, fmt.Errorf("error getting two best midfielders: %v", err)
 	}
 
-	totalForwardersQuality, err := getTwoBestPlayers(lineup, "forward")
+	totalForwardersQuality, err := getTwoBestPlayers(lineup, domain.PositionForward)
 	if err != nil {
 		return playingStyleResult{}, fmt.Errorf("error getting two best forwarders: %v", err)
 	}
@@ -282,7 +282,7 @@ func CalculateRivalChancesByDefensivePositioning(lineup []domain.Player, defensi
 	var totalMentalityOfDefenders, totalPhysiqueOfDefenders int
 
 	for _, player := range lineup {
-		if player.Position == "defender" {
+		if player.Position == domain.PositionDefender {
 			totalMentalityOfDefenders += player.Mental
 			totalPhysiqueOfDefenders += player.Physique
 		}
@@ -323,10 +323,10 @@ func CalculatePossessionByBuildUpPlay(lineup []domain.Player, buildUpPlay string
 	var defenderCount int
 
 	for _, player := range lineup {
-		if player.Position == "goalkeeper" {
+		if player.Position == domain.PositionGoalkeeper {
 			totalTechniqueOfGoalkeeper += player.Technique
 			totalMentalityOfGoalkeeper += player.Mental
-		} else if player.Position == "defender" {
+		} else if player.Position == domain.PositionDefender {
 			totalTechniqueOfDefenders += player.Technique
 			totalMentalOfDefenders += player.Mental
 			defenderCount++
@@ -377,11 +377,11 @@ func CalculateRivalChancesByAttackFocus(lineup []domain.Player, attackFocus stri
 	var forwardCount, midfieldersCount int
 
 	for _, player := range lineup {
-		if player.Position == "midfielder" {
+		if player.Position == domain.PositionMidfielder {
 			totalTechniqueOfMidfield += player.Technique
 			totalPhysiqueOfMidfild += player.Physique
 			midfieldersCount++
-		} else if player.Position == "forward" {
+		} else if player.Position == domain.PositionForward {
 			forwardCount++
 
 		}
@@ -470,7 +470,7 @@ func getTwoBestPlayers(players []domain.Player, position string) (int, error) {
 	for _, p := range players {
 		if p.Position == position {
 			selected = append(selected, p)
-		} else if p.Position == "midfielder" {
+		} else if p.Position == domain.PositionMidfielder {
 			midfielders = append(midfielders, p)
 		}
 	}

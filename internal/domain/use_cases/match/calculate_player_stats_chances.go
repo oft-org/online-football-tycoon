@@ -56,9 +56,9 @@ func ModifyChancesForBuildUpPlay(strategy domain.Strategy, forwardChances, midfi
 func DistributeChancesToPlayers(lineup []domain.Player, forwardChances, midfieldChances, defenderChances, totalChances int) map[uuid.UUID]int {
 	chancesByPlayer := make(map[uuid.UUID]int)
 
-	forwards := filterPlayersByPosition(lineup, "forward")
-	midfielders := filterPlayersByPosition(lineup, "midfielder")
-	defenders := filterPlayersByPosition(lineup, "defender")
+	forwards := filterPlayersByPosition(lineup, domain.PositionForward)
+	midfielders := filterPlayersByPosition(lineup, domain.PositionMidfielder)
+	defenders := filterPlayersByPosition(lineup, domain.PositionDefender)
 
 	forwardChancesByPlayer := DistributeChances(forwards, forwardChances)
 	for k, v := range forwardChancesByPlayer {

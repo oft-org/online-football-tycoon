@@ -20,3 +20,10 @@ type Player struct {
 	Fitness     int
 	Happiness   int
 }
+
+const (
+	PositionGoalkeeper = "goalkeeper"
+	PositionDefender   = "defender"
+	PositionMidfielder = "midfielder"
+	PositionForward    = "forward"
+)
