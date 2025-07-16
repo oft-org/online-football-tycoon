@@ -1,0 +1,27 @@
+name: Run migrations
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'cmd/migrations/**'
+      - '.github/workflows/migrate.yml'
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run migrate/migrate against Supabase
+        run: |
+          docker run --rm \
+            -v $(pwd)/cmd/migrations/sql:/migrations \
+            migrate/migrate \
+            -path=/migrations \
+            -database "${{ secrets.SUPABASE_DB_URL }}" \
+            up
