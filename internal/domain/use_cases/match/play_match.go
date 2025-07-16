@@ -50,5 +50,12 @@ func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error
 			return domain.Result{}, fmt.Errorf("PostMatchEvent failed: %w", err)
 		}
 	}
+
+	err = a.UpdateClassification(homeTeamId, awayTeamId, result.HomeStats.Goals, result.AwayStats.Goals)
+	if err != nil {
+		log.Printf("error posting event to repo: %v", err)
+		return domain.Result{}, fmt.Errorf("UpdateClassification failed: %w", err)
+	}
+
 	return result, nil
 }

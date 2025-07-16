@@ -15,14 +15,20 @@ type Repository interface {
 	GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatch, error)
 }
 
-func NewApp(repository Repository) AppService {
+type ClassificationRepository interface {
+	UpdateClassification(domain.Classification) error
+}
+
+func NewApp(repository Repository, classificationRepo ClassificationRepository) AppService {
 	return AppService{
-		repo:      repository,
-		simulator: NewSimulator(),
+		repo:               repository,
+		classificationRepo: classificationRepo,
+		simulator:          NewSimulator(),
 	}
 }
 
 type AppService struct {
-	repo      Repository
-	simulator Simulator
+	repo               Repository
+	classificationRepo ClassificationRepository
+	simulator          Simulator
 }
