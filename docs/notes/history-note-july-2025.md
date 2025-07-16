@@ -1,4 +1,4 @@
-# 📌 Note on Missing Pull Request Merge Commits (July 2025)
+#  Note on Missing Pull Request Merge Commits (July 2025)
 
 On July 8, 2025, a `git push --force` was applied to the `main` branch in order to replace its commit history with that of the `feature/competition-structure` branch.
 
@@ -16,7 +16,7 @@ If needed, the previous state of `main` can be recovered via local `git reflog` 
 
 ---
 
-✅ **Summary**  
+ **Summary**  
 - Code is intact  
 - PRs #22 to #26 are merged  
 - Merge commits are no longer visible in `main`  

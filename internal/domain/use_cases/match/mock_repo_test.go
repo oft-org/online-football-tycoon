@@ -40,3 +40,12 @@ func (m *MockMatchRepository) GetPendingMatches(timestamp time.Time) ([]domain.S
 	args := m.Called(timestamp)
 	return args.Get(0).([]domain.SeasonMatch), args.Error(1)
 }
+
+type MockClassificationRepository struct {
+	mock.Mock
+}
+
+func (m *MockClassificationRepository) UpdateClassification(classification domain.Classification) error {
+	args := m.Called(classification)
+	return args.Error(0)
+}

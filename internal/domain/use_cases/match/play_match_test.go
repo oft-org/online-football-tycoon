@@ -15,6 +15,8 @@ func TestPlayMatch(t *testing.T) {
 	seasonID := uuid.New()
 
 	mockRepo := new(MockMatchRepository)
+	mockClassificationRepo := new(MockClassificationRepository)
+	mockClassificationRepo.On("UpdateClassification", mock.Anything).Return(nil)
 
 	homePlayers := []domain.Player{
 		{PlayerId: uuid.New(), FirstName: "Marc-André", LastName: "ter Stegen", Nationality: "DEU", Position: "goalkeeper", Age: 31, Fee: 50000000, Salary: 10000000, Technique: 85, Mental: 88, Physique: 80, InjuryDays: 0, Lined: true, Familiarity: 90, Fitness: 95, Happiness: 90},
@@ -78,7 +80,7 @@ func TestPlayMatch(t *testing.T) {
 	mockRepo.On("PostMatchEvent", mock.Anything).Return(nil)
 	mockRepo.On("PostMatches", mock.Anything).Return(nil)
 
-	service := match.NewApp(mockRepo)
+	service := match.NewApp(mockRepo, mockClassificationRepo)
 
 	result, err := service.PlayMatch(seasonID, matchID)
 
