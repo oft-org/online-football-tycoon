@@ -107,7 +107,7 @@ func CalculateQuality(home domain.Team) (int, error) {
 func GetRandomDefender(home []domain.Player) *domain.Player {
 	var defenders []domain.Player
 	for _, player := range home {
-		if player.Position == "defender" {
+		if player.Position == domain.PositionDefender {
 			defenders = append(defenders, player)
 		}
 
@@ -118,7 +118,7 @@ func GetRandomDefender(home []domain.Player) *domain.Player {
 func GetRandomMidfielder(home []domain.Player) *domain.Player {
 	var midfielders []domain.Player
 	for _, player := range home {
-		if player.Position == "midfielder" {
+		if player.Position == domain.PositionMidfielder {
 			midfielders = append(midfielders, player)
 		}
 
@@ -140,7 +140,7 @@ func GetRandomForward(home []domain.Player) *domain.Player {
 func GetGoalkeeper(home []domain.Player) *domain.Player {
 	var goalkeepers []domain.Player
 	for _, player := range home {
-		if player.Position == "goalkeeper" {
+		if player.Position == domain.PositionGoalkeeper {
 			goalkeepers = append(goalkeepers, player)
 		}
 
@@ -151,7 +151,7 @@ func GetGoalkeeper(home []domain.Player) *domain.Player {
 func GetRandomPlayerExcludingGoalkeeper(home []domain.Player) *domain.Player {
 	var playersExcludingGoalkeepers []domain.Player
 	for _, player := range home {
-		if player.Position != "goalkeeper" {
+		if player.Position != domain.PositionGoalkeeper {
 			playersExcludingGoalkeepers = append(playersExcludingGoalkeepers, player)
 		}
 

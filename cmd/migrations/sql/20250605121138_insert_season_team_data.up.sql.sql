@@ -22,7 +22,7 @@ JOIN oft.team t ON (
   (tor.name = 'Segunda División' AND t.name IN (
     'Club Atlético Rocafuerte',
     'Deportivo Villa del Mar',
-    'Agrupación Deportiva Puente',
+    'Agrupación Deportiva Puente Largo',
     'Sporting Monteluz CF'
   )) OR
   (tor.name = 'Copa de España' AND t.name IN (
@@ -32,7 +32,7 @@ JOIN oft.team t ON (
     'Fútbol Club Valle Azul',
     'Club Atlético Rocafuerte',
     'Deportivo Villa del Mar',
-    'Agrupación Deportiva Puente',
+    'Agrupación Deportiva Puente Largo',
     'Sporting Monteluz CF'
   ))
 );

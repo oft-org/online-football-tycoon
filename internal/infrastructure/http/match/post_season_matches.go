@@ -23,6 +23,7 @@ func (h Handler) PostSeasonMatches(c *gin.Context) {
 
 	err := h.teamApp.GenerateRoundRobinSchedule(req.SeasonID)
 	if err != nil {
+		log.Printf("[PostSeasonMatches] error generating schedule for season %s: %v", req.SeasonID, err)
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

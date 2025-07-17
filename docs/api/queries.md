@@ -127,17 +127,17 @@ INSERT INTO oft.player (
     id, team_id, firstname, lastname, nationality, position, age, fee, salary,
     technique, mental, physique, injurydays, lined, familiarity, fitness, happiness)
 VALUES
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Raúl', 'Cano', 'ESP', 'goalkeeper', 29, 3300000, 90000, 72, 75, 70, 0, false, 80, 82, 85),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Sergio', 'Morales', 'ESP', 'defender', 27, 3100000, 88000, 70, 72, 69, 0, false, 78, 80, 83),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Javier', 'Reyes', 'ESP', 'defender', 28, 3200000, 89000, 71, 73, 70, 0, false, 79, 81, 84),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Erik', 'Larsen', 'DEN', 'defender', 30, 3500000, 94000, 74, 76, 73, 0, false, 82, 84, 87),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Luis', 'Santos', 'ESP', 'defender', 27, 3100000, 88000, 70, 72, 69, 0, false, 78, 80, 83),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Lucas', 'Martinez', 'ARG', 'midfielder', 28, 3300000, 90000, 71, 73, 70, 0, false, 79, 81, 84),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Miguel', 'Vargas', 'ESP', 'midfielder', 26, 3000000, 87000, 69, 71, 68, 0, false, 77, 79, 82),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Nicolás', 'Gómez', 'URU', 'midfielder', 28, 3300000, 90000, 72, 74, 71, 0, false, 80, 82, 85),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Marco', 'Rossi', 'ITA', 'midfielder', 27, 3200000, 89000, 70, 72, 69, 0, false, 78, 80, 83),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'James', 'Wilson', 'ENG', 'forward', 29, 3400000, 92000, 73, 75, 72, 0, false, 81, 83, 86),
-(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Unión Deportiva Río Claro'), 'Juan', 'Herrera', 'ESP', 'forward', 28, 3200000, 89000, 71, 73, 70, 0, false, 79, 81, 84);
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Raúl', 'Cano', 'ESP', 'goalkeeper', 29, 3300000, 90000, 72, 75, 70, 0, false, 80, 82, 85),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Sergio', 'Morales', 'ESP', 'defender', 27, 3100000, 88000, 70, 72, 69, 0, false, 78, 80, 83),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Javier', 'Reyes', 'ESP', 'defender', 28, 3200000, 89000, 71, 73, 70, 0, false, 79, 81, 84),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Erik', 'Larsen', 'DEN', 'defender', 30, 3500000, 94000, 74, 76, 73, 0, false, 82, 84, 87),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Luis', 'Santos', 'ESP', 'defender', 27, 3100000, 88000, 70, 72, 69, 0, false, 78, 80, 83),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Lucas', 'Martinez', 'ARG', 'midfielder', 28, 3300000, 90000, 71, 73, 70, 0, false, 79, 81, 84),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Miguel', 'Vargas', 'ESP', 'midfielder', 26, 3000000, 87000, 69, 71, 68, 0, false, 77, 79, 82),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Nicolás', 'Gómez', 'URU', 'midfielder', 28, 3300000, 90000, 72, 74, 71, 0, false, 80, 82, 85),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Marco', 'Rossi', 'ITA', 'midfielder', 27, 3200000, 89000, 70, 72, 69, 0, false, 78, 80, 83),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'James', 'Wilson', 'ENG', 'forward', 29, 3400000, 92000, 73, 75, 72, 0, false, 81, 83, 86),
+(gen_random_uuid(), (SELECT id FROM oft.team WHERE name = 'Sporting Monteluz CF'), 'Juan', 'Herrera', 'ESP', 'forward', 28, 3200000, 89000, 71, 73, 70, 0, false, 79, 81, 84);
 
 
 

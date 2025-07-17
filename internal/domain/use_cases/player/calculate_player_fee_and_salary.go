@@ -4,6 +4,8 @@ import (
 	"log"
 	"math/rand"
 	"time"
+
+	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
 const (
@@ -67,18 +69,18 @@ func CalculatePlayerFeeAndSalary(technique, mental, physique, age int, country, 
 	}
 
 	switch position {
-	case "goalkeeper":
+	case domain.PositionGoalkeeper:
 		fee -= 2_000_000 * (rand.Intn(2) + 1)
 		if totalPlayerQuality < 120 {
 			salary -= 200_000 * (rand.Intn(5) + 1)
 		}
 
-	case "defender":
+	case domain.PositionDefender:
 		fee -= 1_200_000 * (rand.Intn(2) + 1)
 
-	case "midfielder":
+	case domain.PositionMidfielder:
 		fee += 500_000 * (rand.Intn(2) + 1)
-	case "forward":
+	case domain.PositionForward:
 		fee += 1_550_000 * (rand.Intn(3) + 1)
 		salary += 50_000 * (rand.Intn(8) + 1)
 	}

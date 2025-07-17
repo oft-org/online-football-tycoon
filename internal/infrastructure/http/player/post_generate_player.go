@@ -23,6 +23,7 @@ func (h Handler) PostGeneratePlayer(c *gin.Context) {
 
 	player, err := h.app.GeneratePlayer(req.Country, req.Position)
 	if err != nil {
+		log.Printf("[PostGeneratePlayer] error generating player (country=%s, position=%s): %v", req.Country, req.Position, err)
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
