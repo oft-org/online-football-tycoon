@@ -129,7 +129,7 @@ func GetRandomMidfielder(home []domain.Player) *domain.Player {
 func GetRandomForward(home []domain.Player) *domain.Player {
 	var forwards []domain.Player
 	for _, player := range home {
-		if player.Position == "forward" {
+		if player.Position == domain.PositionForward {
 			forwards = append(forwards, player)
 		}
 

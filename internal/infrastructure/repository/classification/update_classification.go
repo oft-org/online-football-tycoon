@@ -29,7 +29,11 @@ func (r *Repository) UpdateClassification(classification domain.Classification) 
 		classification.GoalsAgainst = team.GoalsAgainst
 	}
 
-	_, err = r.updateClassification.Exec(classification.TeamID, classification.Points, classification.GoalsFor, classification.GoalsAgainst)
+	_, err = r.updateClassification.Exec(
+		classification.TeamID,
+		classification.Points,
+		classification.GoalsFor,
+		classification.GoalsAgainst)
 	if err != nil {
 		log.Printf("Error updating classification: %v", err)
 		return err
