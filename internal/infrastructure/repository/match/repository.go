@@ -27,6 +27,12 @@ var postMatchEventsQuery string
 //go:embed sql/get_pending_matches.sql
 var getPendingMatches string
 
+//go:embed sql/get_match_by_id.sql
+var getMatchByID string
+
+//go:embed sql/update_match.sql
+var updateMatch string
+
 func NewRepository(db *sql.DB) (*Repository, error) {
 	getMatchesStmt, err := db.Prepare(getMatchesQuery)
 	if err != nil {
@@ -61,6 +67,14 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 	if err != nil {
 		return nil, err
 	}
+	getMatchByIDStmt, err := db.Prepare(getMatchByID)
+	if err != nil {
+		return nil, err
+	}
+	updateMatchStmt, err := db.Prepare(updateMatch)
+	if err != nil {
+		return nil, err
+	}
 
 	return &Repository{
 		db:                 db,
@@ -71,6 +85,8 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 		postMatch:          postMatchStmt,
 		postMatchEvents:    postMatchEventsStmt,
 		getPendingMatches:  getPendingMatchesStmt,
+		getMatchByID:       getMatchByIDStmt,
+		updateMatch:        updateMatchStmt,
 	}, nil
 }
 
@@ -83,4 +99,6 @@ type Repository struct {
 	postMatch          *sql.Stmt
 	postMatchEvents    *sql.Stmt
 	getPendingMatches  *sql.Stmt
+	getMatchByID       *sql.Stmt
+	updateMatch        *sql.Stmt
 }

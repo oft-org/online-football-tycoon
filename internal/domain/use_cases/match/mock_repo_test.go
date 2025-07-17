@@ -12,7 +12,7 @@ type MockMatchRepository struct {
 	mock.Mock
 }
 
-func (m *MockMatchRepository) GetMatchById(matchID uuid.UUID) (*domain.Match, error) {
+func (m *MockMatchRepository) GetMatchStrategyById(matchID uuid.UUID) (*domain.Match, error) {
 	args := m.Called(matchID)
 
 	match, ok := args.Get(0).(*domain.Match)
@@ -41,11 +41,15 @@ func (m *MockMatchRepository) GetPendingMatches(timestamp time.Time) ([]domain.S
 	return args.Get(0).([]domain.SeasonMatch), args.Error(1)
 }
 
-type MockClassificationRepository struct {
-	mock.Mock
-}
-
 func (m *MockClassificationRepository) UpdateClassification(classification domain.Classification) error {
 	args := m.Called(classification)
 	return args.Error(0)
+}
+func (m *MockMatchRepository) UpdateMatch(seasonMatch domain.SeasonMatch) error {
+	args := m.Called(seasonMatch.ID, seasonMatch.SeasonID, seasonMatch.HomeTeamID, seasonMatch.AwayTeamID, seasonMatch.MatchDate, seasonMatch.HomeResult, seasonMatch.AwayResult)
+	return args.Error(0)
+}
+
+type MockClassificationRepository struct {
+	mock.Mock
 }

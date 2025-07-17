@@ -8,11 +8,12 @@ import (
 )
 
 type Repository interface {
-	GetMatchById(matchId uuid.UUID) (*domain.Match, error)
+	GetMatchStrategyById(matchId uuid.UUID) (*domain.Match, error)
 	PostMatch(seasonId, homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error
 	PostMatchEvent(event domain.MatchEventInfo) error
 	PostMatches(matches []domain.SeasonMatch) error
 	GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatch, error)
+	UpdateMatch(seasonMatch domain.SeasonMatch) error
 }
 
 type ClassificationRepository interface {

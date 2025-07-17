@@ -10,12 +10,12 @@ import (
 )
 
 func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error) {
-	m, err := a.repo.GetMatchById(matchID)
+	m, err := a.repo.GetMatchStrategyById(matchID)
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("error retrieving match: %w", err)
 	}
 	if m == nil {
-		log.Printf("repo.GetMatchById returned nil for matchID: %s", matchID)
+		log.Printf("repo.GetMatchStrategyById returned nil for matchID: %s", matchID)
 		return domain.Result{}, fmt.Errorf("no match found with ID: %s", matchID)
 	}
 	result, allEvents, err := a.simulator.Play(m)
@@ -29,7 +29,16 @@ func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error
 
 	log.Printf("Match played: homeTeamID=%s, awayTeamID=%s", homeTeamId, awayTeamId)
 
-	err = a.repo.PostMatch(seasonID, homeTeamId, awayTeamId, matchDate, result.HomeStats.Goals, result.AwayStats.Goals)
+	var seasonMatch domain.SeasonMatch
+	seasonMatch.ID = matchID
+	seasonMatch.SeasonID = seasonID
+	seasonMatch.HomeTeamID = homeTeamId
+	seasonMatch.AwayTeamID = awayTeamId
+	seasonMatch.MatchDate = matchDate
+	seasonMatch.HomeResult = &result.HomeStats.Goals
+	seasonMatch.AwayResult = &result.AwayStats.Goals
+
+	err = a.repo.UpdateMatch(seasonMatch)
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("error PostMatch: %w", err)
 	}
