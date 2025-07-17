@@ -23,6 +23,7 @@ func generateMatchesForSeason(seasonID uuid.UUID, teamIDs []uuid.UUID) []domain.
 	if len(teamIDs)%2 != 0 {
 		teamIDs = append(teamIDs, uuid.Nil)
 	}
+
 	numRounds := len(teamIDs) - 1
 	var matches []domain.SeasonMatch
 
@@ -31,32 +32,22 @@ func generateMatchesForSeason(seasonID uuid.UUID, teamIDs []uuid.UUID) []domain.
 			home := teamIDs[i]
 			away := teamIDs[len(teamIDs)-1-i]
 			if home != uuid.Nil && away != uuid.Nil {
+
 				matches = append(matches, domain.SeasonMatch{
 					SeasonID:   seasonID,
 					HomeTeamID: home,
 					AwayTeamID: away,
 				})
-			}
-		}
-		teamIDs = append([]uuid.UUID{teamIDs[0]},
-			append([]uuid.UUID{teamIDs[len(teamIDs)-1]}, teamIDs[1:len(teamIDs)-1]...)...)
-	}
-
-	for round := 0; round < numRounds; round++ {
-		for i := 0; i < len(teamIDs)/2; i++ {
-			home := teamIDs[len(teamIDs)-1-i]
-			away := teamIDs[i]
-			if home != uuid.Nil && away != uuid.Nil {
 				matches = append(matches, domain.SeasonMatch{
 					SeasonID:   seasonID,
-					HomeTeamID: home,
-					AwayTeamID: away,
+					HomeTeamID: away,
+					AwayTeamID: home,
 				})
 			}
 		}
-
 		teamIDs = append([]uuid.UUID{teamIDs[0]},
-			append([]uuid.UUID{teamIDs[len(teamIDs)-1]}, teamIDs[1:len(teamIDs)-1]...)...)
+			append([]uuid.UUID{teamIDs[len(teamIDs)-1]}, teamIDs[1:len(teamIDs)-1]...)...,
+		)
 	}
 
 	return matches
