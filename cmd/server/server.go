@@ -17,6 +17,7 @@ import (
 	repositoryMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/match"
 	repositoryPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/player"
 	repositoryTeam "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/team"
+	repositoryTournament "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/tournament"
 	internalPostgres "github.com/robertobouses/online-football-tycoon/internal/pkg/postgres"
 	"github.com/spf13/cobra"
 )
@@ -64,10 +65,15 @@ var ServerCmd = &cobra.Command{
 			log.Fatal("failde to init classification repository:", err)
 
 		}
+		tournamentRepo, err := repositoryTournament.NewRepository(db)
+		if err != nil {
+			log.Fatal("failde to init tournament repository:", err)
+
+		}
 
 		matchApp := appMatch.NewApp(matchRepo, classificationRepo)
 		playerApp := appPlayer.NewApp(playerRepo)
-		teamApp := appTeam.NewApp(teamRepo, *matchRepo)
+		teamApp := appTeam.NewApp(teamRepo, *matchRepo, *tournamentRepo)
 		classificationApp := appClassification.NewApp(classificationRepo)
 
 		matchHandler := handlerMatch.NewHandler(matchApp, teamApp)

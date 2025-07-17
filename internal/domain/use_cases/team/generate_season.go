@@ -1,17 +1,31 @@
 package team
 
 import (
+	"math/rand/v2"
+
 	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func (a AppService) GenerateRoundRobinSchedule(seasonID uuid.UUID) error {
+func (a AppService) GenerateSeason(seasonID uuid.UUID) error {
+	var matches []domain.SeasonMatch
+
+	tournament, err := a.tournamentRepo.GetTournamentBySeasonID(seasonID)
+	if err != nil {
+		return err
+	}
 	teamIDs, err := a.repo.GetSeasonTeam(seasonID)
 	if err != nil {
 		return err
 	}
 
-	matches := generateMatchesForSeason(seasonID, teamIDs)
+	switch tournament.Type {
+	case domain.TournamentLeague:
+		matches = generateLeague(seasonID, teamIDs)
+
+	case domain.TournamentCup:
+		matches = generateCup(seasonID, teamIDs)
+	}
 
 	if err := a.matchRepo.PostMatches(matches); err != nil {
 		return err
@@ -19,7 +33,7 @@ func (a AppService) GenerateRoundRobinSchedule(seasonID uuid.UUID) error {
 	return nil
 }
 
-func generateMatchesForSeason(seasonID uuid.UUID, teamIDs []uuid.UUID) []domain.SeasonMatch {
+func generateLeague(seasonID uuid.UUID, teamIDs []uuid.UUID) []domain.SeasonMatch {
 	if len(teamIDs)%2 != 0 {
 		teamIDs = append(teamIDs, uuid.Nil)
 	}
@@ -48,6 +62,24 @@ func generateMatchesForSeason(seasonID uuid.UUID, teamIDs []uuid.UUID) []domain.
 		teamIDs = append([]uuid.UUID{teamIDs[0]},
 			append([]uuid.UUID{teamIDs[len(teamIDs)-1]}, teamIDs[1:len(teamIDs)-1]...)...,
 		)
+	}
+
+	return matches
+}
+
+func generateCup(seasonID uuid.UUID, teamIDs []uuid.UUID) []domain.SeasonMatch {
+	rand.Shuffle(len(teamIDs), func(i, j int) {
+		teamIDs[i], teamIDs[j] = teamIDs[j], teamIDs[i]
+	})
+
+	var matches []domain.SeasonMatch
+	for i := 0; i+1 < len(teamIDs); i += 2 {
+		match := domain.SeasonMatch{
+			SeasonID:   seasonID,
+			HomeTeamID: teamIDs[i],
+			AwayTeamID: teamIDs[i+1],
+		}
+		matches = append(matches, match)
 	}
 
 	return matches
