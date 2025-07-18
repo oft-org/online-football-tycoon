@@ -2,6 +2,7 @@ package match
 
 import (
 	"database/sql"
+	"log"
 
 	_ "embed"
 )
@@ -25,13 +26,13 @@ var postMatchQuery string
 var postMatchEventsQuery string
 
 //go:embed sql/get_pending_matches.sql
-var getPendingMatches string
+var getPendingMatchesQuery string
 
 //go:embed sql/get_match_by_id.sql
-var getMatchByID string
+var getMatchByIDQuery string
 
 //go:embed sql/update_match.sql
-var updateMatch string
+var updateMatchQuery string
 
 func NewRepository(db *sql.DB) (*Repository, error) {
 	getMatchesStmt, err := db.Prepare(getMatchesQuery)
@@ -63,15 +64,20 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 	if err != nil {
 		return nil, err
 	}
-	getPendingMatchesStmt, err := db.Prepare(getPendingMatches)
+	getPendingMatchesStmt, err := db.Prepare(getPendingMatchesQuery)
 	if err != nil {
 		return nil, err
 	}
-	getMatchByIDStmt, err := db.Prepare(getMatchByID)
+
+	getMatchByIDStmt, err := db.Prepare(getMatchByIDQuery)
 	if err != nil {
 		return nil, err
 	}
-	updateMatchStmt, err := db.Prepare(updateMatch)
+
+	log.Println("Preparing updateMatch with SQL:")
+	log.Println(updateMatchQuery)
+
+	updateMatchStmt, err := db.Prepare(updateMatchQuery)
 	if err != nil {
 		return nil, err
 	}

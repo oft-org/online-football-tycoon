@@ -84,6 +84,7 @@ func TestPlayMatch(t *testing.T) {
 		mock.Anything, mock.Anything, mock.Anything, mock.Anything,
 		mock.Anything, mock.Anything, mock.Anything,
 	).Return(nil)
+
 	service := match.NewApp(mockRepo, mockClassificationRepo)
 
 	result, err := service.PlayMatch(seasonID, matchID)

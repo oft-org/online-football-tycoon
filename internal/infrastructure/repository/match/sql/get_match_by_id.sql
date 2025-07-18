@@ -7,3 +7,4 @@ match_date,
 home_result,
 away_result
 FROM oft.match
+WHERE id=$1;

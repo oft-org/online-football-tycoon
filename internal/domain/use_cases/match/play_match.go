@@ -38,9 +38,10 @@ func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error
 	seasonMatch.HomeResult = &result.HomeStats.Goals
 	seasonMatch.AwayResult = &result.AwayStats.Goals
 
+	log.Printf("Calling UpdateMatch with HomeResult=%v, AwayResult=%v", seasonMatch.HomeResult, seasonMatch.AwayResult)
 	err = a.repo.UpdateMatch(seasonMatch)
 	if err != nil {
-		return domain.Result{}, fmt.Errorf("error PostMatch: %w", err)
+		return domain.Result{}, fmt.Errorf("error UpdateMatch: %w", err)
 	}
 
 	for _, event := range allEvents {
