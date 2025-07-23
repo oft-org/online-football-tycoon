@@ -11,6 +11,7 @@ type MatchApp interface {
 	PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error)
 	GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatch, error)
 	GetMatchDetailsByID(matchID uuid.UUID) (*MatchResponse, error)
+	GetSeasonMatches(seasonID uuid.UUID) ([]domain.SeasonMatch, error)
 }
 
 type TeamApp interface {

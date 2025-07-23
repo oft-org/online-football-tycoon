@@ -70,3 +70,8 @@ func (m *MockMatchRepository) GetMatchEvents(matchID uuid.UUID) ([]domain.MatchE
 	args := m.Called(matchID)
 	return args.Get(0).([]domain.MatchEventInfo), args.Error(1)
 }
+
+func (m *MockMatchRepository) GetSeasonMatches(seasonID uuid.UUID) ([]domain.SeasonMatch, error) {
+	args := m.Called(seasonID)
+	return args.Get(0).([]domain.SeasonMatch), args.Error(1)
+}

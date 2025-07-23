@@ -16,6 +16,7 @@ type MatchRepository interface {
 	UpdateMatch(seasonMatch domain.SeasonMatch) error
 	GetMatchByID(matchID uuid.UUID) (domain.SeasonMatch, error)
 	GetMatchEvents(matchID uuid.UUID) ([]domain.MatchEventInfo, error)
+	GetSeasonMatches(seasonID uuid.UUID) ([]domain.SeasonMatch, error)
 }
 
 type ClassificationRepository interface {
