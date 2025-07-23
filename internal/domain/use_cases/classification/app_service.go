@@ -5,16 +5,22 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-type Repository interface {
+type ClassificationRepository interface {
 	GetClassification(seasonID uuid.UUID) ([]domain.Classification, error)
 }
 
-func NewApp(repository Repository) AppService {
+type TournamentRepository interface {
+	GetTournamentBySeasonID(seasonID uuid.UUID) (domain.Tournament, error)
+}
+
+func NewApp(classificationRepository ClassificationRepository, tournamentRepository TournamentRepository) AppService {
 	return AppService{
-		repo: repository,
+		classificationRepo: classificationRepository,
+		tournamentRepo:     tournamentRepository,
 	}
 }
 
 type AppService struct {
-	repo Repository
+	classificationRepo ClassificationRepository
+	tournamentRepo     TournamentRepository
 }

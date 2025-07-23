@@ -5,7 +5,7 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func (r *Repository) GetTournamentBySeasonID(seasonId uuid.UUID) (*domain.Tournament, error) {
+func (r *Repository) GetTournamentBySeasonID(seasonId uuid.UUID) (domain.Tournament, error) {
 	row := r.getTournamentBySeasonID.QueryRow(seasonId)
 	var tournament domain.Tournament
 	if err := row.Scan(
@@ -17,7 +17,7 @@ func (r *Repository) GetTournamentBySeasonID(seasonId uuid.UUID) (*domain.Tourna
 		&tournament.PromotionTo,
 		&tournament.DescentTo,
 	); err != nil {
-		return &domain.Tournament{}, err
+		return domain.Tournament{}, err
 	}
-	return &tournament, nil
+	return tournament, nil
 }
