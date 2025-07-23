@@ -42,6 +42,7 @@ func (s *Server) Run(port string) error {
 	match.POST("/play", s.match.PostPlayMatchbyId)
 	match.POST("/season", s.match.PostSeasonMatches)
 	match.GET("/pending", s.match.GetPendingMatches)
+	match.GET("/:match_id", s.match.GetMatchByID)
 
 	player := s.engine.Group("/player")
 	player.POST("/generate", s.player.PostGeneratePlayer)

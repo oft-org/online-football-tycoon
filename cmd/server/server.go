@@ -71,12 +71,12 @@ var ServerCmd = &cobra.Command{
 
 		}
 
-		matchApp := appMatch.NewApp(matchRepo, classificationRepo)
+		matchApp := appMatch.NewApp(matchRepo, classificationRepo, teamRepo)
 		playerApp := appPlayer.NewApp(playerRepo)
 		teamApp := appTeam.NewApp(teamRepo, *matchRepo, *tournamentRepo)
 		classificationApp := appClassification.NewApp(classificationRepo)
 
-		matchHandler := handlerMatch.NewHandler(matchApp, teamApp)
+		matchHandler := handlerMatch.NewHandler(&matchApp, teamApp)
 		playerHandler := handlerPlayer.NewHandler(playerApp)
 		classificationHandler := handlerClassification.NewHandler(classificationApp)
 

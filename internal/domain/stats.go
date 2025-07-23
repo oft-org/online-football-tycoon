@@ -23,6 +23,7 @@ type MatchEventStats struct {
 }
 
 type MatchEventInfo struct {
+	ID          uuid.UUID
 	MatchID     uuid.UUID
 	TeamId      uuid.UUID
 	EventType   string
