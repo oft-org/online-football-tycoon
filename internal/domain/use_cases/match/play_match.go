@@ -10,7 +10,7 @@ import (
 )
 
 func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error) {
-	m, err := a.repo.GetMatchStrategyById(matchID)
+	m, err := a.matchRepo.GetMatchStrategyById(matchID)
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("error retrieving match: %w", err)
 	}
@@ -39,7 +39,7 @@ func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error
 	seasonMatch.AwayResult = &result.AwayStats.Goals
 
 	log.Printf("Calling UpdateMatch with HomeResult=%v, AwayResult=%v", seasonMatch.HomeResult, seasonMatch.AwayResult)
-	err = a.repo.UpdateMatch(seasonMatch)
+	err = a.matchRepo.UpdateMatch(seasonMatch)
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("error UpdateMatch: %w", err)
 	}
@@ -54,7 +54,7 @@ func (a AppService) PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error
 			Description: event.Event,
 		}
 
-		err = a.repo.PostMatchEvent(matchEventInfo)
+		err = a.matchRepo.PostMatchEvent(matchEventInfo)
 		if err != nil {
 			log.Printf("error posting event to repo: %v", err)
 			return domain.Result{}, fmt.Errorf("PostMatchEvent failed: %w", err)

@@ -23,7 +23,7 @@ func (h *Handler) GetPendingMatches(c *gin.Context) {
 		return
 	}
 
-	pendingMatches, err := h.app.GetPendingMatches(timestamp)
+	pendingMatches, err := h.matchApp.GetPendingMatches(timestamp)
 	if err != nil {
 		log.Printf("Failed to get pending matches after %s | Error: %v", timestamp, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get pending matches"})

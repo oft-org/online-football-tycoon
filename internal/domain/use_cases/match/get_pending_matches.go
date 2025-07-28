@@ -7,7 +7,7 @@ import (
 )
 
 func (a AppService) GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatch, error) {
-	matches, err := a.repo.GetPendingMatches(timestamp)
+	matches, err := a.matchRepo.GetPendingMatches(timestamp)
 	if err != nil {
 		return []domain.SeasonMatch{}, err
 	}

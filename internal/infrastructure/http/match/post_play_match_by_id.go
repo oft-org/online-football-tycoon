@@ -24,7 +24,7 @@ func (h Handler) PostPlayMatchbyId(c *gin.Context) {
 
 	log.Printf("match id: %s", req.MatchId)
 
-	result, err := h.app.PlayMatch(req.SeasonId, req.MatchId)
+	result, err := h.matchApp.PlayMatch(req.SeasonId, req.MatchId)
 	if err != nil {
 		log.Printf("[PostPlayMatchbyId] error playing match %s: %v", req.MatchId, err)
 		c.JSON(nethttp.StatusInternalServerError, gin.H{"error": err.Error()})

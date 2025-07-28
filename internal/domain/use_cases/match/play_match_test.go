@@ -16,6 +16,8 @@ func TestPlayMatch(t *testing.T) {
 
 	mockRepo := new(MockMatchRepository)
 	mockClassificationRepo := new(MockClassificationRepository)
+	mockTeamRepo := new(MockTeamRepository)
+
 	mockClassificationRepo.On("UpdateClassification", mock.Anything).Return(nil)
 
 	homePlayers := []domain.Player{
@@ -85,7 +87,10 @@ func TestPlayMatch(t *testing.T) {
 		mock.Anything, mock.Anything, mock.Anything,
 	).Return(nil)
 
-	service := match.NewApp(mockRepo, mockClassificationRepo)
+	mockTeamRepo.On("GetTeamByID", homeTeam.Id).Return(homeTeam, nil)
+	mockTeamRepo.On("GetTeamByID", awayTeam.Id).Return(awayTeam, nil)
+
+	service := match.NewApp(mockRepo, mockClassificationRepo, mockTeamRepo)
 
 	result, err := service.PlayMatch(seasonID, matchID)
 
@@ -95,7 +100,6 @@ func TestPlayMatch(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
-
 	assert.GreaterOrEqual(t, result.HomeStats.Goals, 0, "Home goals should be non-negative")
 	assert.GreaterOrEqual(t, result.AwayStats.Goals, 0, "Away goals should be non-negative")
 
@@ -105,4 +109,6 @@ func TestPlayMatch(t *testing.T) {
 	}
 
 	mockRepo.AssertExpectations(t)
+	mockClassificationRepo.AssertExpectations(t)
+	mockTeamRepo.AssertExpectations(t)
 }

@@ -7,23 +7,25 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-type App interface {
+type MatchApp interface {
 	PlayMatch(seasonID, matchID uuid.UUID) (domain.Result, error)
 	GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatch, error)
+	GetMatchDetailsByID(matchID uuid.UUID) (*MatchResponse, error)
+	GetSeasonMatches(seasonID uuid.UUID) ([]domain.SeasonMatch, error)
 }
 
 type TeamApp interface {
 	GenerateSeason(seasonID uuid.UUID) error
 }
 
-func NewHandler(app App, teamApp TeamApp) Handler {
+func NewHandler(matchApp MatchApp, teamApp TeamApp) Handler {
 	return Handler{
-		app:     app,
-		teamApp: teamApp,
+		matchApp: matchApp,
+		teamApp:  teamApp,
 	}
 }
 
 type Handler struct {
-	app     App
-	teamApp TeamApp
+	matchApp MatchApp
+	teamApp  TeamApp
 }

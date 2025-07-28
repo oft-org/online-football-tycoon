@@ -8,6 +8,22 @@ import (
 	"github.com/google/uuid"
 )
 
+type ClassificationInfo struct {
+	TournamentName string `json:"tournament_name"`
+	Country        string `json:"country"`
+	Teams          []TeamClassificationInfo
+}
+
+type TeamClassificationInfo struct {
+	TeamID         uuid.UUID `json:"team_id"`
+	TeamName       string    `json:"team_name"`
+	Position       int       `json:"position"`
+	Points         int       `json:"points"`
+	GoalsFor       int       `json:"goals_for"`
+	GoalsAgainst   int       `json:"goals_against"`
+	GoalDifference int       `json:"goal_difference"`
+}
+
 func (h *Handler) GetClassification(c *gin.Context) {
 	seasonIDParam := c.Param("season_id")
 	seasonID, err := uuid.Parse(seasonIDParam)
@@ -24,5 +40,28 @@ func (h *Handler) GetClassification(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, classificationData)
+	var response []ClassificationInfo
+
+	for _, classification := range classificationData {
+		var teamInfos []TeamClassificationInfo
+		for _, team := range classification.Teams {
+			teamInfos = append(teamInfos, TeamClassificationInfo{
+				TeamID:         team.TeamID,
+				TeamName:       team.TeamName,
+				Position:       team.Position,
+				Points:         team.Points,
+				GoalsFor:       team.GoalsFor,
+				GoalsAgainst:   team.GoalsAgainst,
+				GoalDifference: team.GoalDifference,
+			})
+		}
+
+		response = append(response, ClassificationInfo{
+			TournamentName: classification.TournamentName,
+			Country:        classification.Country,
+			Teams:          teamInfos,
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }

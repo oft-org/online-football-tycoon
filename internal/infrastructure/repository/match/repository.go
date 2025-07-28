@@ -34,6 +34,12 @@ var getMatchByIDQuery string
 //go:embed sql/update_match.sql
 var updateMatchQuery string
 
+//go:embed sql/get_match_events.sql
+var getMatchEventsQuery string
+
+//go:embed sql/get_season_matches.sql
+var getSeasonMatchesQuery string
+
 func NewRepository(db *sql.DB) (*Repository, error) {
 	getMatchesStmt, err := db.Prepare(getMatchesQuery)
 	if err != nil {
@@ -81,6 +87,14 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 	if err != nil {
 		return nil, err
 	}
+	getMatchEventsStmt, err := db.Prepare(getMatchEventsQuery)
+	if err != nil {
+		return nil, err
+	}
+	getSesaonMatchesStmt, err := db.Prepare(getSeasonMatchesQuery)
+	if err != nil {
+		return nil, err
+	}
 
 	return &Repository{
 		db:                 db,
@@ -93,6 +107,8 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 		getPendingMatches:  getPendingMatchesStmt,
 		getMatchByID:       getMatchByIDStmt,
 		updateMatch:        updateMatchStmt,
+		getMatchEvents:     getMatchEventsStmt,
+		getSeasonMatches:   getSesaonMatchesStmt,
 	}, nil
 }
 
@@ -107,4 +123,6 @@ type Repository struct {
 	getPendingMatches  *sql.Stmt
 	getMatchByID       *sql.Stmt
 	updateMatch        *sql.Stmt
+	getMatchEvents     *sql.Stmt
+	getSeasonMatches   *sql.Stmt
 }
