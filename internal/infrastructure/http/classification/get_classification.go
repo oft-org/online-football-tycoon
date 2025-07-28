@@ -9,6 +9,12 @@ import (
 )
 
 type ClassificationInfo struct {
+	TournamentName string `json:"tournament_name"`
+	Country        string `json:"country"`
+	Teams          []TeamClassificationInfo
+}
+
+type TeamClassificationInfo struct {
 	TeamID         uuid.UUID `json:"team_id"`
 	TeamName       string    `json:"team_name"`
 	Position       int       `json:"position"`
@@ -16,8 +22,6 @@ type ClassificationInfo struct {
 	GoalsFor       int       `json:"goals_for"`
 	GoalsAgainst   int       `json:"goals_against"`
 	GoalDifference int       `json:"goal_difference"`
-	TournamentName string    `json:"tournament_name"`
-	Country        string    `json:"country"`
 }
 
 func (h *Handler) GetClassification(c *gin.Context) {
@@ -37,17 +41,25 @@ func (h *Handler) GetClassification(c *gin.Context) {
 	}
 
 	var response []ClassificationInfo
-	for _, c := range classificationData {
+
+	for _, classification := range classificationData {
+		var teamInfos []TeamClassificationInfo
+		for _, team := range classification.Teams {
+			teamInfos = append(teamInfos, TeamClassificationInfo{
+				TeamID:         team.TeamID,
+				TeamName:       team.TeamName,
+				Position:       team.Position,
+				Points:         team.Points,
+				GoalsFor:       team.GoalsFor,
+				GoalsAgainst:   team.GoalsAgainst,
+				GoalDifference: team.GoalDifference,
+			})
+		}
+
 		response = append(response, ClassificationInfo{
-			TeamID:         c.TeamID,
-			TeamName:       c.TeamName,
-			Position:       c.Position,
-			Points:         c.Points,
-			GoalsFor:       c.GoalsFor,
-			GoalsAgainst:   c.GoalsAgainst,
-			GoalDifference: c.GoalDifference,
-			TournamentName: c.TournamentName,
-			Country:        c.Country,
+			TournamentName: classification.TournamentName,
+			Country:        classification.Country,
+			Teams:          teamInfos,
 		})
 	}
 

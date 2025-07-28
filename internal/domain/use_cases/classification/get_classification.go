@@ -6,7 +6,13 @@ import (
 	"github.com/google/uuid"
 )
 
-type ClassificationWithTournament struct {
+type Classification struct {
+	TournamentName string
+	Country        string
+	Teams          []TeamClassification
+}
+
+type TeamClassification struct {
 	TeamID         uuid.UUID
 	TeamName       string
 	Position       int
@@ -14,11 +20,9 @@ type ClassificationWithTournament struct {
 	GoalsFor       int
 	GoalsAgainst   int
 	GoalDifference int
-	TournamentName string
-	Country        string
 }
 
-func (a AppService) GetClassification(seasonID uuid.UUID) ([]ClassificationWithTournament, error) {
+func (a AppService) GetClassification(seasonID uuid.UUID) ([]Classification, error) {
 	classification, err := a.classificationRepo.GetClassification(seasonID)
 	if err != nil {
 		return nil, err
@@ -30,9 +34,9 @@ func (a AppService) GetClassification(seasonID uuid.UUID) ([]ClassificationWithT
 		return nil, err
 	}
 
-	var result []ClassificationWithTournament
+	teams := make([]TeamClassification, 0, len(classification))
 	for _, c := range classification {
-		result = append(result, ClassificationWithTournament{
+		teams = append(teams, TeamClassification{
 			TeamID:         c.TeamID,
 			TeamName:       c.TeamName,
 			Position:       c.Position,
@@ -40,9 +44,15 @@ func (a AppService) GetClassification(seasonID uuid.UUID) ([]ClassificationWithT
 			GoalsFor:       c.GoalsFor,
 			GoalsAgainst:   c.GoalsAgainst,
 			GoalDifference: c.GoalDifference,
+		})
+	}
+
+	result := []Classification{
+		{
 			TournamentName: tournament.Name,
 			Country:        tournament.CountryCode,
-		})
+			Teams:          teams,
+		},
 	}
 
 	return result, nil

@@ -6,7 +6,7 @@ import (
 )
 
 type App interface {
-	GetClassification(seasonID uuid.UUID) ([]classification.ClassificationWithTournament, error)
+	GetClassification(seasonID uuid.UUID) ([]classification.Classification, error)
 }
 
 func NewHandler(app App) Handler {
