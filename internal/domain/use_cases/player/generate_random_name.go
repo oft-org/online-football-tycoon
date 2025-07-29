@@ -7,21 +7,16 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 func GetRandomNameByCountry(country string) (string, string, error) {
 	baseURL := "https://randomuser.me/api/"
 	params := url.Values{}
 
-	apiKey := os.Getenv("RANDOMAPI_KEY")
-	apiRef := os.Getenv("RANDOMAPI_REF")
-
 	params.Add("nat", country)
 	params.Add("gender", "male")
-	params.Add("key", apiKey)
-	params.Add("ref", apiRef)
 	params.Add("results", "1")
+	params.Add("cloudflare", "robertobouses")
 	apiURL := fmt.Sprintf("%s?%s", baseURL, params.Encode())
 
 	req, err := http.NewRequest("GET", apiURL, nil)
