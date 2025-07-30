@@ -18,11 +18,6 @@ func (m *MockMatchRepository) GetMatchStrategyById(matchID uuid.UUID) (*domain.M
 	return match, args.Error(1)
 }
 
-func (m *MockMatchRepository) PostMatch(seasonId, homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error {
-	args := m.Called(seasonId, homeTeamId, awayTeamId, matchDate, homeGoals, awayGoals)
-	return args.Error(0)
-}
-
 func (m *MockMatchRepository) PostMatchEvent(event domain.MatchEventInfo) error {
 	args := m.Called(event)
 	return args.Error(0)

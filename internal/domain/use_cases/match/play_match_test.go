@@ -78,7 +78,6 @@ func TestPlayMatch(t *testing.T) {
 	}
 
 	mockRepo.On("GetMatchStrategyById", matchID).Return(&game, nil)
-	mockRepo.On("PostMatch", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	mockRepo.On("PostMatchEvent", mock.Anything).Return(nil)
 	mockRepo.On("PostMatches", mock.Anything).Return(nil)
 	mockRepo.On(
