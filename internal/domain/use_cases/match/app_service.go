@@ -9,7 +9,6 @@ import (
 
 type MatchRepository interface {
 	GetMatchStrategyById(matchId uuid.UUID) (*domain.Match, error)
-	PostMatch(seasonId, homeTeamId, awayTeamId uuid.UUID, matchDate time.Time, homeGoals, awayGoals int) error
 	PostMatchEvent(event domain.MatchEventInfo) error
 	PostMatches(matches []domain.SeasonMatch) error
 	GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatch, error)
