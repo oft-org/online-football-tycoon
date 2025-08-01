@@ -6,14 +6,19 @@ import (
 
 	"github.com/joho/godotenv"
 	appClassification "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/classification"
+	appCountry "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/country"
 	appMatch "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/match"
 	appPlayer "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/player"
 	appTeam "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/team"
+	appTournament "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/tournament"
 	httpServer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http"
 	handlerClassification "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/classification"
+	handlerCountry "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/country"
 	handlerMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/match"
 	handlerPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/player"
+	handlerTournament "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/tournament"
 	repositoryClassification "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/classification"
+	repositoryCountry "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/country"
 	repositoryMatch "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/match"
 	repositoryPlayer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/player"
 	repositoryTeam "github.com/robertobouses/online-football-tycoon/internal/infrastructure/repository/team"
@@ -63,11 +68,14 @@ var ServerCmd = &cobra.Command{
 		classificationRepo, err := repositoryClassification.NewRepository(db)
 		if err != nil {
 			log.Fatal("failde to init classification repository:", err)
-
 		}
 		tournamentRepo, err := repositoryTournament.NewRepository(db)
 		if err != nil {
 			log.Fatal("failde to init tournament repository:", err)
+		}
+		countryRepo, err := repositoryCountry.NewRepository(db)
+		if err != nil {
+			log.Fatal("failde to init country repository:", err)
 
 		}
 
@@ -75,12 +83,16 @@ var ServerCmd = &cobra.Command{
 		playerApp := appPlayer.NewApp(playerRepo)
 		teamApp := appTeam.NewApp(teamRepo, *matchRepo, *tournamentRepo)
 		classificationApp := appClassification.NewApp(classificationRepo, tournamentRepo)
+		countryApp := appCountry.NewApp(countryRepo)
+		tournamentApp := appTournament.NewApp(tournamentRepo)
 
 		matchHandler := handlerMatch.NewHandler(&matchApp, teamApp)
 		playerHandler := handlerPlayer.NewHandler(playerApp)
 		classificationHandler := handlerClassification.NewHandler(classificationApp)
+		countryHandler := handlerCountry.NewHandler(countryApp)
+		tournamentHandler := handlerTournament.NewHandler(tournamentApp)
 
-		s := httpServer.NewServer(matchHandler, playerHandler, classificationHandler)
+		s := httpServer.NewServer(matchHandler, playerHandler, classificationHandler, countryHandler, *tournamentHandler)
 
 		if err := s.Run("8080"); err != nil {
 			log.Fatal("server failed:", err)
