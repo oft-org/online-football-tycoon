@@ -8,22 +8,36 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/classification"
+	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/country"
 	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/match"
 	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/player"
+	"github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/tournament"
 )
 
 type Server struct {
 	match          match.Handler
 	player         player.Handler
 	classification classification.Handler
+	country        country.Handler
+	tournament     tournament.Handler
 	engine         *gin.Engine
 }
 
-func NewServer(match match.Handler, player player.Handler, classification classification.Handler) Server {
+func NewServer(
+	match match.Handler,
+	player player.Handler,
+	classification classification.Handler,
+	country country.Handler,
+	tournament tournament.Handler,
+
+) Server {
+
 	return Server{
 		match:          match,
 		player:         player,
 		classification: classification,
+		country:        country,
+		tournament:     tournament,
 		engine:         gin.Default(),
 	}
 }
@@ -50,6 +64,12 @@ func (s *Server) Run(port string) error {
 
 	classification := s.engine.Group("/season")
 	classification.GET("/:season_id/classification", s.classification.GetClassification)
+
+	country := s.engine.Group("/country")
+	country.GET("/", s.country.GetCountries)
+
+	tournament := s.engine.Group("/tournament")
+	tournament.GET("/:country", s.tournament.GetTournamentsByCountry)
 
 	log.Printf("running api at %s port\n", port)
 	return s.engine.Run(fmt.Sprintf(":%s", port))
