@@ -15,7 +15,7 @@ type MatchApp interface {
 }
 
 type TeamApp interface {
-	GenerateSeason(seasonID uuid.UUID) error
+	GenerateSeason(seasonID uuid.UUID, startDate time.Time) error
 }
 
 func NewHandler(matchApp MatchApp, teamApp TeamApp) Handler {
