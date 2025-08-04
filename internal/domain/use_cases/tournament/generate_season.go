@@ -1,4 +1,4 @@
-package team
+package tournament
 
 import (
 	"math/rand/v2"
@@ -8,14 +8,14 @@ import (
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-func (a AppService) GenerateSeason(seasonID uuid.UUID, startDate time.Time) error {
+func (a *AppService) GenerateSeason(seasonID uuid.UUID, startDate time.Time) error {
 	var matches []domain.SeasonMatch
 
 	tournament, err := a.tournamentRepo.GetTournamentBySeasonID(seasonID)
 	if err != nil {
 		return err
 	}
-	teamIDs, err := a.repo.GetSeasonTeam(seasonID)
+	teamIDs, err := a.teamRepo.GetSeasonTeam(seasonID)
 	if err != nil {
 		return err
 	}

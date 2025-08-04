@@ -14,18 +14,18 @@ type MatchApp interface {
 	GetSeasonMatches(seasonID uuid.UUID) ([]domain.SeasonMatch, error)
 }
 
-type TeamApp interface {
+type TournamentApp interface {
 	GenerateSeason(seasonID uuid.UUID, startDate time.Time) error
 }
 
-func NewHandler(matchApp MatchApp, teamApp TeamApp) Handler {
+func NewHandler(matchApp MatchApp, tournamentApp TournamentApp) Handler {
 	return Handler{
-		matchApp: matchApp,
-		teamApp:  teamApp,
+		matchApp:      matchApp,
+		tournamentApp: tournamentApp,
 	}
 }
 
 type Handler struct {
-	matchApp MatchApp
-	teamApp  TeamApp
+	matchApp      MatchApp
+	tournamentApp TournamentApp
 }

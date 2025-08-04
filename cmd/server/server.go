@@ -9,7 +9,6 @@ import (
 	appCountry "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/country"
 	appMatch "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/match"
 	appPlayer "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/player"
-	appTeam "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/team"
 	appTournament "github.com/robertobouses/online-football-tycoon/internal/domain/use_cases/tournament"
 	httpServer "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http"
 	handlerClassification "github.com/robertobouses/online-football-tycoon/internal/infrastructure/http/classification"
@@ -81,12 +80,11 @@ var ServerCmd = &cobra.Command{
 
 		matchApp := appMatch.NewApp(matchRepo, classificationRepo, teamRepo)
 		playerApp := appPlayer.NewApp(playerRepo)
-		teamApp := appTeam.NewApp(teamRepo, *matchRepo, *tournamentRepo)
 		classificationApp := appClassification.NewApp(classificationRepo, tournamentRepo)
 		countryApp := appCountry.NewApp(countryRepo)
-		tournamentApp := appTournament.NewApp(tournamentRepo)
+		tournamentApp := appTournament.NewApp(tournamentRepo, teamRepo, matchRepo)
 
-		matchHandler := handlerMatch.NewHandler(&matchApp, teamApp)
+		matchHandler := handlerMatch.NewHandler(matchApp, &tournamentApp)
 		playerHandler := handlerPlayer.NewHandler(playerApp)
 		classificationHandler := handlerClassification.NewHandler(classificationApp)
 		countryHandler := handlerCountry.NewHandler(countryApp)

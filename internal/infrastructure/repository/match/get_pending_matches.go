@@ -19,7 +19,7 @@ func (r *Repository) GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatc
 		var m domain.SeasonMatch
 		var matchID, seasonID, homeTeam, awayTeam uuid.UUID
 		var matchDate time.Time
-		var homeResult, awayResult int
+		var homeResult, awayResult *int
 		err := rows.Scan(
 			&matchID,
 			&seasonID,
@@ -37,8 +37,8 @@ func (r *Repository) GetPendingMatches(timestamp time.Time) ([]domain.SeasonMatc
 		m.HomeTeamID = homeTeam
 		m.AwayTeamID = awayTeam
 		m.MatchDate = matchDate
-		m.HomeResult = &homeResult
-		m.AwayResult = &awayResult
+		m.HomeResult = homeResult
+		m.AwayResult = awayResult
 
 		matches = append(matches, m)
 	}

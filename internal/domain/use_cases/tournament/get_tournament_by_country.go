@@ -8,7 +8,7 @@ import (
 
 func (a AppService) GetTournamentsByCountry(country string) ([]domain.Tournament, error) {
 
-	tournaments, err := a.repo.GetTournamentsByCountry(country)
+	tournaments, err := a.tournamentRepo.GetTournamentsByCountry(country)
 	if err != nil {
 		log.Println("Error Get Tournament on GetTournamentsByCountry")
 		return nil, err

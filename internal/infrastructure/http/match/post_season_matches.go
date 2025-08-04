@@ -29,7 +29,7 @@ func (h Handler) PostSeasonMatches(c *gin.Context) {
 		return
 	}
 
-	err = h.teamApp.GenerateSeason(req.SeasonID, startDate)
+	err = h.tournamentApp.GenerateSeason(req.SeasonID, startDate)
 	if err != nil {
 		log.Printf("[GenerateSeason] error generating schedule for season %s: %v", req.SeasonID, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

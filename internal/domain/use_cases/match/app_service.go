@@ -26,8 +26,8 @@ type TeamRepository interface {
 	GetTeamByID(teamID uuid.UUID) (domain.Team, error)
 }
 
-func NewApp(matchRepo MatchRepository, classificationRepo ClassificationRepository, teamRepo TeamRepository) AppService {
-	return AppService{
+func NewApp(matchRepo MatchRepository, classificationRepo ClassificationRepository, teamRepo TeamRepository) *AppService {
+	return &AppService{
 		matchRepo:          matchRepo,
 		classificationRepo: classificationRepo,
 		teamRepo:           teamRepo,

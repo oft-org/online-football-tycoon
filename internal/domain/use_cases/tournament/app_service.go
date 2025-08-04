@@ -1,19 +1,33 @@
 package tournament
 
 import (
+	"github.com/google/uuid"
 	"github.com/robertobouses/online-football-tycoon/internal/domain"
 )
 
-type Repository interface {
+type TournamentRepository interface {
 	GetTournamentsByCountry(country string) ([]domain.Tournament, error)
+	GetTournamentBySeasonID(seasonId uuid.UUID) (domain.Tournament, error)
 }
 
-func NewApp(repository Repository) AppService {
+type TeamRepository interface {
+	GetSeasonTeam(seasonID uuid.UUID) ([]uuid.UUID, error)
+}
+
+type MatchRepository interface {
+	PostMatches(matches []domain.SeasonMatch) error
+}
+
+func NewApp(tournamentRepository TournamentRepository, teamRepository TeamRepository, matchRepository MatchRepository) AppService {
 	return AppService{
-		repo: repository,
+		tournamentRepo: tournamentRepository,
+		teamRepo:       teamRepository,
+		matchRepo:      matchRepository,
 	}
 }
 
 type AppService struct {
-	repo Repository
+	tournamentRepo TournamentRepository
+	teamRepo       TeamRepository
+	matchRepo      MatchRepository
 }

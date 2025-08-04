@@ -63,8 +63,10 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 
 	postMatchStmt, err := db.Prepare(postMatchQuery)
 	if err != nil {
+		log.Fatalf("failed to prepare postMatchStmt: %v", err)
 		return nil, err
 	}
+	log.Println("postMatchStmt prepared successfully")
 
 	postMatchEventsStmt, err := db.Prepare(postMatchEventsQuery)
 	if err != nil {

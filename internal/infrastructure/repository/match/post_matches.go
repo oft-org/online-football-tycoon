@@ -9,6 +9,9 @@ import (
 func (r *Repository) PostMatches(matches []domain.SeasonMatch) error {
 	for _, match := range matches {
 
+		if r.postMatch == nil {
+			log.Fatal("panic prevented: r.postMatch is nil in Repository")
+		}
 		_, err := r.postMatch.Exec(
 			match.SeasonID,
 			match.HomeTeamID,
